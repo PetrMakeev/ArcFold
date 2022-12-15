@@ -4398,8 +4398,8 @@ object frmMain: TfrmMain
   PixelsPerInch = 96
   TextHeight = 13
   object Button1: TButton
-    Left = 8
-    Top = 168
+    Left = 232
+    Top = 144
     Width = 75
     Height = 25
     Caption = 'Button1'
