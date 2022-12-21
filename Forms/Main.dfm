@@ -2,8 +2,8 @@ object frmMain: TfrmMain
   Left = 0
   Top = 0
   Caption = #1056#1077#1079#1077#1088#1074#1085#1086#1077' '#1082#1086#1087#1080#1088#1086#1074#1072#1085#1080#1077
-  ClientHeight = 391
-  ClientWidth = 579
+  ClientHeight = 334
+  ClientWidth = 657
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -4394,21 +4394,60 @@ object frmMain: TfrmMain
     0000000000000000000000000000000000000000000000000000000000000000
     0000000000000000000000000000}
   Menu = MainMenu1
-  OldCreateOrder = False
-  PixelsPerInch = 96
   TextHeight = 13
+  object Memo1: TMemo
+    Left = 0
+    Top = 128
+    Width = 657
+    Height = 206
+    Align = alBottom
+    Lines.Strings = (
+      'Memo1')
+    TabOrder = 2
+    ExplicitTop = 127
+    ExplicitWidth = 653
+  end
   object Button1: TButton
-    Left = 232
-    Top = 144
+    Left = 40
+    Top = 256
     Width = 75
     Height = 25
     Caption = 'Button1'
     TabOrder = 0
     OnClick = Button1Click
   end
-  object MainMenu1: TMainMenu
+  object DBGrid1: TDBGrid
+    Left = 0
+    Top = 0
+    Width = 657
+    Height = 129
+    Align = alTop
+    DataSource = dsSetting
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+    PopupMenu = popTask
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'NameTask'
+        Width = 198
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'FromZip'
+        Visible = True
+      end>
   end
-  object TrayIcon1: TTrayIcon
+  object MainMenu1: TMainMenu
+    Left = 48
+  end
+  object TrayIcon: TTrayIcon
     Icon.Data = {
       0000010007001010000001002000680400007600000018180000010020008809
       0000DE0400002020000001002000A8100000660E00003030000001002000A825
@@ -8793,13 +8832,123 @@ object frmMain: TfrmMain
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000}
     PopupMenu = popTray
-    Left = 112
+    Left = 192
   end
   object popTray: TPopupMenu
-    Left = 64
+    Left = 312
     object popRestore: TMenuItem
       Caption = #1042#1086#1089#1089#1090#1072#1085#1086#1074#1080#1090#1100
       OnClick = popRestoreClick
+    end
+  end
+  object AppEvents: TApplicationEvents
+    OnMinimize = AppEventsMinimize
+    Left = 248
+  end
+  object dbSetting: TClientDataSet
+    PersistDataPacket.Data = {
+      900100009619E0BD010000001800000012000000000003000000900102494404
+      00010000000000084E616D655461736B01004900000001000557494454480200
+      020064000746726F6D5A6970020049000000010005574944544802000200F401
+      05546F5A6970020049000000010005574944544802000200F4010A5072656669
+      784E616D65010049000000010005574944544802000200640009466F726D6174
+      5A697004000100000000000B436F6D70726573735A6970040001000000000008
+      43727970745A69700400010000000000094372797074576F7264010049000000
+      0100055749445448020002000A000D437279707446696C654E616D6504000100
+      00000000075469705461736B04000100000000000854696D655461736B080008
+      0000000000074461795461736B0400010000000000094D6F6E74685461736B04
+      000100000000000C4461794D6F6E74685461736B04000100000000000C4F6E65
+      496E4461795461736B040001000000000009506175736554696D650800080000
+      000000064F6E5461736B04000100000000000000}
+    Active = True
+    Aggregates = <>
+    FileName = 'ArcFold'
+    Params = <>
+    Left = 40
+    Top = 160
+    object dbSettingID: TIntegerField
+      AutoGenerateValue = arAutoInc
+      FieldName = 'ID'
+    end
+    object dbSettingNameTask: TStringField
+      DisplayWidth = 20
+      FieldName = 'NameTask'
+      Size = 100
+    end
+    object dbSettingFromZip: TStringField
+      FieldName = 'FromZip'
+      Size = 500
+    end
+    object dbSettingToZip: TStringField
+      FieldName = 'ToZip'
+      Size = 500
+    end
+    object dbSettingPrefixName: TStringField
+      FieldName = 'PrefixName'
+      Size = 100
+    end
+    object dbSettingFormatZip: TIntegerField
+      FieldName = 'FormatZip'
+    end
+    object dbSettingCompressZip: TIntegerField
+      FieldName = 'CompressZip'
+    end
+    object dbSettingCryptZip: TIntegerField
+      FieldName = 'CryptZip'
+    end
+    object dbSettingCryptWord: TStringField
+      FieldName = 'CryptWord'
+      Size = 10
+    end
+    object dbSettingCryptFileName: TIntegerField
+      FieldName = 'CryptFileName'
+    end
+    object dbSettingTipTask: TIntegerField
+      FieldName = 'TipTask'
+    end
+    object dbSettingTimeTask: TDateTimeField
+      FieldName = 'TimeTask'
+    end
+    object dbSettingDayTask: TIntegerField
+      FieldName = 'DayTask'
+    end
+    object dbSettingMonthTask: TIntegerField
+      FieldName = 'MonthTask'
+    end
+    object dbSettingDayMonthTask: TIntegerField
+      FieldName = 'DayMonthTask'
+    end
+    object dbSettingOneInDayTask: TIntegerField
+      FieldName = 'OneInDayTask'
+    end
+    object dbSettingPauseTime: TDateTimeField
+      FieldName = 'PauseTime'
+    end
+    object dbSettingOnTask: TIntegerField
+      FieldName = 'OnTask'
+    end
+  end
+  object dsSetting: TDataSource
+    DataSet = dbSetting
+    Left = 112
+    Top = 160
+  end
+  object popTask: TPopupMenu
+    OnPopup = popTaskPopup
+    Left = 232
+    Top = 160
+    object popAdd: TMenuItem
+      Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1079#1072#1076#1072#1095#1091
+      OnClick = popAddClick
+    end
+    object popOn: TMenuItem
+      Caption = #1042#1082#1083#1102#1095#1080#1090#1100
+    end
+    object popOff: TMenuItem
+      Caption = #1042#1099#1082#1083#1102#1095#1080#1090#1100
+    end
+    object popDel: TMenuItem
+      Caption = #1059#1076#1072#1083#1080#1090#1100
     end
   end
 end
