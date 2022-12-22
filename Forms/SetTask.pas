@@ -64,7 +64,7 @@ type
     chbMonth10: TCheckBox;
     chbMonth11: TCheckBox;
     chbMonth12: TCheckBox;
-    txtDayMonth: TNumberBox;
+    txtDayMonthTask: TNumberBox;
     Label11: TLabel;
     btnSave: TButton;
     btnCancel: TButton;
@@ -73,7 +73,25 @@ type
     procedure sbMonthAllOffClick(Sender: TObject);
     procedure sbWeekAllOnClick(Sender: TObject);
     procedure sbWeekAllOffClick(Sender: TObject);
-    procedure initSet();
+
+    procedure initADD();
+    procedure initEDIT(NameTask:string;
+                       FromZip:string;
+                       ToZip:string;
+                       PrefixName:string;
+                       FormatZip:integer;
+                       CompressZip:integer;
+                       CryptZip:integer;
+                       CryptWord:string;
+                       CryptFileName:integer;
+                       TipTask:integer;
+                       TimeTask:TDatetime;
+                       DayTask:integer;
+                       MonthTask:integer;
+                       DayMonthTask:integer;
+                       OnTask:integer;
+                       SelDay:string;
+                       SelMonth:string);
     procedure btnCancelClick(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
     procedure chbCryptZipClick(Sender: TObject);
@@ -194,7 +212,7 @@ begin
 
 end;
 
-procedure TfrmSetTask.initSet;
+procedure TfrmSetTask.initADD();
 begin
   // настраиваем форму по указанному режиму
   if modeEdit = 'ADD' then
@@ -212,7 +230,7 @@ begin
     sbWeekAllOff.Click;
     gbMonth.Visible := False;
     sbMonthAllOff.Click;
-    txtDayMonth.ValueInt := 1;
+    txtDayMonthTask.ValueInt := 1;
 
     cmbFormatZip.ItemIndex := 0;
     cmbCompressZip.ItemIndex := 2;
@@ -221,9 +239,60 @@ begin
     txtCryptWord1.Text := '';
     txtCryptWord2.Text := '';
     chbCryptZipClick(Self);
-
-
   end;
+
+
+end;
+
+procedure TfrmSetTask.initEDIT(NameTask, FromZip, ToZip, PrefixName: string;
+  FormatZip, CompressZip, CryptZip: integer; CryptWord: string; CryptFileName,
+  TipTask: integer; TimeTask: TDatetime; DayTask, MonthTask, DayMonthTask,
+  OnTask: integer; SelDay:string; SelMonth:string);
+begin
+  //
+  // настраиваем форму по указанному режиму
+  // режим редактирования
+  txtNameTask.Text := NameTask;
+  txtFromZip.Text := FromZip;
+  txtToZip.Text := ToZip;
+  txtPrefixName.Text := PrefixName;
+
+  pgSet.TabIndex:= 0;
+
+  cmbTipTask.ItemIndex := TipTask;
+  cmbTipTask.OnChange(Self);
+  txtTimeTask.Time := TimeTask;
+
+  chbWeek1.Checked := '1' = MidStr(SelDay,1,1);
+  chbWeek2.Checked := '1' = MidStr(SelDay,2,1);
+  chbWeek3.Checked := '1' = MidStr(SelDay,3,1);
+  chbWeek4.Checked := '1' = MidStr(SelDay,4,1);
+  chbWeek5.Checked := '1' = MidStr(SelDay,5,1);
+  chbWeek6.Checked := '1' = MidStr(SelDay,6,1);
+  chbWeek7.Checked := '1' = MidStr(SelDay,7,1);
+
+  chbMonth01.Checked := '1' = MidStr(SelMonth,1,1);
+  chbMonth02.Checked := '1' = MidStr(SelMonth,2,1);
+  chbMonth03.Checked := '1' = MidStr(SelMonth,3,1);
+  chbMonth04.Checked := '1' = MidStr(SelMonth,4,1);
+  chbMonth05.Checked := '1' = MidStr(SelMonth,5,1);
+  chbMonth06.Checked := '1' = MidStr(SelMonth,6,1);
+  chbMonth07.Checked := '1' = MidStr(SelMonth,7,1);
+  chbMonth08.Checked := '1' = MidStr(SelMonth,8,1);
+  chbMonth09.Checked := '1' = MidStr(SelMonth,9,1);
+  chbMonth10.Checked := '1' = MidStr(SelMonth,10,1);
+  chbMonth11.Checked := '1' = MidStr(SelMonth,11,1);
+  chbMonth12.Checked := '1' = MidStr(SelMonth,12,1);
+
+  txtDayMonthTask.ValueInt := DayMonthTask;
+
+  cmbFormatZip.ItemIndex := FormatZip;
+  cmbCompressZip.ItemIndex := CompressZip;
+  chbCryptZip.Checked := 1 = CryptZip;
+  chbCryptFileName.Checked := 1 = CryptFileName;
+  txtCryptWord1.Text := CryptWord;
+  txtCryptWord2.Text := CryptWord;
+  chbCryptZipClick(Self);
 end;
 
 procedure TfrmSetTask.sbMonthAllOffClick(Sender: TObject);

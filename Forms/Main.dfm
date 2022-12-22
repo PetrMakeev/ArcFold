@@ -4395,21 +4395,9 @@ object frmMain: TfrmMain
     0000000000000000000000000000}
   Menu = MainMenu1
   TextHeight = 13
-  object Memo1: TMemo
-    Left = 0
-    Top = 128
-    Width = 657
-    Height = 206
-    Align = alBottom
-    Lines.Strings = (
-      'Memo1')
-    TabOrder = 2
-    ExplicitTop = 127
-    ExplicitWidth = 653
-  end
   object Button1: TButton
-    Left = 40
-    Top = 256
+    Left = 104
+    Top = 296
     Width = 75
     Height = 25
     Caption = 'Button1'
@@ -4420,7 +4408,7 @@ object frmMain: TfrmMain
     Left = 0
     Top = 0
     Width = 657
-    Height = 129
+    Height = 265
     Align = alTop
     DataSource = dsSetting
     Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
@@ -8916,7 +8904,7 @@ object frmMain: TfrmMain
   end
   object dbSetting: TClientDataSet
     PersistDataPacket.Data = {
-      690100009619E0BD010000001800000010000000000003000000690102494404
+      A10100009619E0BD010000001800000012000000000003000000A10102494404
       00010000000000084E616D655461736B01004900000001000557494454480200
       020064000746726F6D5A6970020049000000010005574944544802000200F401
       05546F5A6970020049000000010005574944544802000200F4010A5072656669
@@ -8927,7 +8915,9 @@ object frmMain: TfrmMain
       00000000075469705461736B04000100000000000854696D655461736B080008
       0000000000074461795461736B0400010000000000094D6F6E74685461736B04
       000100000000000C4461794D6F6E74685461736B0400010000000000064F6E54
-      61736B04000100000000000000}
+      61736B04000100000000000653656C4461790100490000000100055749445448
+      0200020014000853656C4D6F6E74680100490000000100055749445448020002
+      0014000000}
     Active = True
     Aggregates = <>
     FileName = 'ArcFold'
@@ -8989,6 +8979,12 @@ object frmMain: TfrmMain
     object dbSettingOnTask: TIntegerField
       FieldName = 'OnTask'
     end
+    object dbSettingSelDay: TStringField
+      FieldName = 'SelDay'
+    end
+    object dbSettingSelMonth: TStringField
+      FieldName = 'SelMonth'
+    end
   end
   object dsSetting: TDataSource
     DataSet = dbSetting
@@ -9003,6 +8999,17 @@ object frmMain: TfrmMain
       Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1079#1072#1076#1072#1095#1091
       OnClick = popAddClick
     end
+    object popEdit: TMenuItem
+      Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100
+      OnClick = popEditClick
+    end
+    object popDel: TMenuItem
+      Caption = #1059#1076#1072#1083#1080#1090#1100
+      OnClick = popDelClick
+    end
+    object N1: TMenuItem
+      Caption = '-'
+    end
     object popOn: TMenuItem
       Caption = #1042#1082#1083#1102#1095#1080#1090#1100
       OnClick = popOnClick
@@ -9010,10 +9017,6 @@ object frmMain: TfrmMain
     object popOff: TMenuItem
       Caption = #1042#1099#1082#1083#1102#1095#1080#1090#1100
       OnClick = popOffClick
-    end
-    object popDel: TMenuItem
-      Caption = #1059#1076#1072#1083#1080#1090#1100
-      OnClick = popDelClick
     end
   end
 end
