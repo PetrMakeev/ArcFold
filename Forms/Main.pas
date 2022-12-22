@@ -26,8 +26,6 @@ type
     dbSettingCryptFileName: TIntegerField;
     dbSettingTipTask: TIntegerField;
     dbSettingTimeTask: TDateTimeField;
-    dbSettingDayTask: TIntegerField;
-    dbSettingMonthTask: TIntegerField;
     dbSettingDayMonthTask: TIntegerField;
     dsSetting: TDataSource;
     Button1: TButton;
@@ -50,6 +48,21 @@ type
     procedure popAddClick(Sender: TObject);
 
     procedure AddSetting();
+    procedure SaveSetting(NameTask:string;
+                       FromZip:string;
+                       ToZip:string;
+                       PrefixName:string;
+                       FormatZip:integer;
+                       CompressZip:integer;
+                       CryptZip:integer;
+                       CryptWord:string;
+                       CryptFileName:integer;
+                       TipTask:integer;
+                       TimeTask:TDatetime;
+                       DayMonthTask:integer;
+                       OnTask:integer;
+                       SelDay:string;
+                       SelMonth:string);
     procedure popDelClick(Sender: TObject);
     procedure popOnClick(Sender: TObject);
     procedure popOffClick(Sender: TObject);
@@ -70,7 +83,7 @@ uses
 
 {$R *.dfm}
 
-procedure TfrmMain.AddSetting;
+procedure TfrmMain.ADDSetting();
 begin
   // добавляем данные
   dbSetting.Append;
@@ -87,8 +100,6 @@ begin
 
   dbSetting.FieldByName('TipTask').AsInteger := 1;
   dbSetting.FieldByName('TimeTask').AsDateTime := Now();
-  dbSetting.FieldByName('DayTask').AsInteger := 1;
-  dbSetting.FieldByName('MonthTask').AsInteger := 1;
   dbSetting.FieldByName('DayMonthTask').AsInteger := 1;
   dbSetting.FieldByName('OnTask').AsInteger := 1;
   dbSetting.FieldByName('SelDay').AsString := '1001001';
@@ -114,8 +125,6 @@ begin
 
                       dbSettingTipTask.AsInteger,
                       dbSettingTimeTask.AsDateTime,
-                      dbSettingDayTask.AsInteger,
-                      dbSettingMonthTask.AsInteger,
                       dbSettingDayMonthTask.AsInteger,
                       dbSettingOnTask.AsInteger,
                       dbSettingSelDay.AsString,
@@ -138,7 +147,7 @@ end;
 procedure TfrmMain.Button1Click(Sender: TObject);
 begin
   // добавляем в локальную базу информацию о задаче
-  addSetting();
+  AddSetting();
 end;
 
 procedure TfrmMain.popAddClick(Sender: TObject);
@@ -217,6 +226,33 @@ begin
     popOff.Visible := false;
   end;
 
+end;
+
+procedure TfrmMain.SaveSetting(NameTask, FromZip, ToZip, PrefixName: string;
+  FormatZip, CompressZip, CryptZip: integer; CryptWord: string; CryptFileName,
+  TipTask: integer; TimeTask: TDatetime; DayMonthTask, OnTask: integer; SelDay,
+  SelMonth: string);
+begin
+  // Сохраняем даныные
+  dbSetting.Edit;
+  dbSetting.FieldByName('NameTask').AsString := NameTask;
+  dbSetting.FieldByName('FromZip').AsString := FromZip;
+  dbSetting.FieldByName('ToZip').AsString := ToZip;
+  dbSetting.FieldByName('PrefixName').AsString := PrefixName;
+
+  dbSetting.FieldByName('FormatZip').AsInteger := FormatZip;
+  dbSetting.FieldByName('CompressZip').AsInteger := CompressZip;
+  dbSetting.FieldByName('CryptZip').AsInteger := CryptZip;
+  dbSetting.FieldByName('CryptWord').AsString := CryptWord;
+  dbSetting.FieldByName('CryptFileName').AsInteger := CryptFileName;
+
+  dbSetting.FieldByName('TipTask').AsInteger := TipTask;
+  dbSetting.FieldByName('TimeTask').AsDateTime := TimeTask;
+  dbSetting.FieldByName('DayMonthTask').AsInteger := DayMonthTask;
+  dbSetting.FieldByName('OnTask').AsInteger := OnTask;
+  dbSetting.FieldByName('SelDay').AsString := SelDay;
+  dbSetting.FieldByName('SelMonth').AsString := SelMonth;
+  dbSetting.Post;
 end;
 
 end.

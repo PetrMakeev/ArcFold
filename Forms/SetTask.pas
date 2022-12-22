@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls,
-  Vcl.WinXPickers, Vcl.WinXCalendars, Vcl.Buttons, Vcl.NumberBox, System.StrUtils;
+  Vcl.WinXPickers, Vcl.WinXCalendars, Vcl.Buttons, Vcl.NumberBox, System.StrUtils, System.Math;
 
 type
   TfrmSetTask = class(TForm)
@@ -68,6 +68,7 @@ type
     Label11: TLabel;
     btnSave: TButton;
     btnCancel: TButton;
+    chbOnTask: TCheckBox;
     procedure cmbTipTaskChange(Sender: TObject);
     procedure sbMonthAllOnClick(Sender: TObject);
     procedure sbMonthAllOffClick(Sender: TObject);
@@ -86,8 +87,6 @@ type
                        CryptFileName:integer;
                        TipTask:integer;
                        TimeTask:TDatetime;
-                       DayTask:integer;
-                       MonthTask:integer;
                        DayMonthTask:integer;
                        OnTask:integer;
                        SelDay:string;
@@ -165,7 +164,42 @@ begin
   end;
 
   // вызываем добавление
-  frmMain.AddSetting();
+  frmMain.SaveSetting(txtNameTask.Text,
+                      txtFromZip.Text,
+                      txtToZip.Text,
+                      txtPrefixName.Text,
+
+                      cmbFormatZip.ItemIndex,
+                      cmbCompressZip.ItemIndex,
+                      ifthen(chbCryptZip.Checked, 1, 0),
+                      txtCryptWord1.Text,
+                      ifthen(chbCryptFileName.Checked, 1, 0),
+
+                      cmbTipTask.ItemIndex,
+                      txtTimeTask.Time,
+                      txtDayMonthTask.ValueInt,
+                      ifthen(chbOnTask.Checked, 1, 0),
+                      ifthen(chbWeek1.Checked, '1','0') +
+                        ifthen(chbWeek2.Checked, '1','0') +
+                        ifthen(chbWeek3.Checked, '1','0') +
+                        ifthen(chbWeek4.Checked, '1','0') +
+                        ifthen(chbWeek5.Checked, '1','0') +
+                        ifthen(chbWeek6.Checked, '1','0') +
+                        ifthen(chbWeek7.Checked, '1','0'),
+                      ifthen(chbMonth01.Checked, '1', '0') +
+                        ifthen(chbMonth02.Checked, '1', '0') +
+                        ifthen(chbMonth03.Checked, '1', '0') +
+                        ifthen(chbMonth04.Checked, '1', '0') +
+                        ifthen(chbMonth05.Checked, '1', '0') +
+                        ifthen(chbMonth06.Checked, '1', '0') +
+                        ifthen(chbMonth07.Checked, '1', '0') +
+                        ifthen(chbMonth08.Checked, '1', '0') +
+                        ifthen(chbMonth09.Checked, '1', '0') +
+                        ifthen(chbMonth10.Checked, '1', '0') +
+                        ifthen(chbMonth11.Checked, '1', '0') +
+                        ifthen(chbMonth12.Checked, '1', '0')
+                      );
+  close;
 
 end;
 
@@ -239,6 +273,7 @@ begin
     txtCryptWord1.Text := '';
     txtCryptWord2.Text := '';
     chbCryptZipClick(Self);
+    chbOnTask.Checked := true;
   end;
 
 
@@ -246,7 +281,7 @@ end;
 
 procedure TfrmSetTask.initEDIT(NameTask, FromZip, ToZip, PrefixName: string;
   FormatZip, CompressZip, CryptZip: integer; CryptWord: string; CryptFileName,
-  TipTask: integer; TimeTask: TDatetime; DayTask, MonthTask, DayMonthTask,
+  TipTask: integer; TimeTask: TDatetime;  DayMonthTask,
   OnTask: integer; SelDay:string; SelMonth:string);
 begin
   //
@@ -293,6 +328,8 @@ begin
   txtCryptWord1.Text := CryptWord;
   txtCryptWord2.Text := CryptWord;
   chbCryptZipClick(Self);
+  chbOnTask.Checked := 1 = OnTask;
+
 end;
 
 procedure TfrmSetTask.sbMonthAllOffClick(Sender: TObject);

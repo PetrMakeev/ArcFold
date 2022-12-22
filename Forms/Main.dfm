@@ -4422,12 +4422,17 @@ object frmMain: TfrmMain
     Columns = <
       item
         Expanded = False
-        FieldName = 'OnTask'
+        FieldName = 'ID'
         Visible = True
       end
       item
         Expanded = False
-        FieldName = 'ID'
+        FieldName = 'SelDay'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'SelMonth'
         Visible = True
       end
       item
@@ -4487,17 +4492,12 @@ object frmMain: TfrmMain
       end
       item
         Expanded = False
-        FieldName = 'DayTask'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'MonthTask'
-        Visible = True
-      end
-      item
-        Expanded = False
         FieldName = 'DayMonthTask'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'OnTask'
         Visible = True
       end>
   end
@@ -8904,7 +8904,7 @@ object frmMain: TfrmMain
   end
   object dbSetting: TClientDataSet
     PersistDataPacket.Data = {
-      A10100009619E0BD010000001800000012000000000003000000A10102494404
+      7F0100009619E0BD0100000018000000100000000000030000007F0102494404
       00010000000000084E616D655461736B01004900000001000557494454480200
       020064000746726F6D5A6970020049000000010005574944544802000200F401
       05546F5A6970020049000000010005574944544802000200F4010A5072656669
@@ -8913,11 +8913,10 @@ object frmMain: TfrmMain
       43727970745A69700400010000000000094372797074576F7264010049000000
       0100055749445448020002000A000D437279707446696C654E616D6504000100
       00000000075469705461736B04000100000000000854696D655461736B080008
-      0000000000074461795461736B0400010000000000094D6F6E74685461736B04
-      000100000000000C4461794D6F6E74685461736B0400010000000000064F6E54
-      61736B04000100000000000653656C4461790100490000000100055749445448
-      0200020014000853656C4D6F6E74680100490000000100055749445448020002
-      0014000000}
+      00000000000C4461794D6F6E74685461736B0400010000000000064F6E546173
+      6B04000100000000000653656C44617901004900000001000557494454480200
+      020014000853656C4D6F6E746801004900000001000557494454480200020014
+      000000}
     Active = True
     Aggregates = <>
     FileName = 'ArcFold'
@@ -8966,12 +8965,6 @@ object frmMain: TfrmMain
     end
     object dbSettingTimeTask: TDateTimeField
       FieldName = 'TimeTask'
-    end
-    object dbSettingDayTask: TIntegerField
-      FieldName = 'DayTask'
-    end
-    object dbSettingMonthTask: TIntegerField
-      FieldName = 'MonthTask'
     end
     object dbSettingDayMonthTask: TIntegerField
       FieldName = 'DayMonthTask'
