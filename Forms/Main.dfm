@@ -4434,13 +4434,82 @@ object frmMain: TfrmMain
     Columns = <
       item
         Expanded = False
+        FieldName = 'OnTask'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'ID'
+        Visible = True
+      end
+      item
+        Expanded = False
         FieldName = 'NameTask'
-        Width = 198
         Visible = True
       end
       item
         Expanded = False
         FieldName = 'FromZip'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'ToZip'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'PrefixName'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'FormatZip'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'CompressZip'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'CryptZip'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'CryptWord'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'CryptFileName'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'TipTask'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'TimeTask'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'DayTask'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'MonthTask'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'DayMonthTask'
         Visible = True
       end>
   end
@@ -8847,7 +8916,7 @@ object frmMain: TfrmMain
   end
   object dbSetting: TClientDataSet
     PersistDataPacket.Data = {
-      900100009619E0BD010000001800000012000000000003000000900102494404
+      690100009619E0BD010000001800000010000000000003000000690102494404
       00010000000000084E616D655461736B01004900000001000557494454480200
       020064000746726F6D5A6970020049000000010005574944544802000200F401
       05546F5A6970020049000000010005574944544802000200F4010A5072656669
@@ -8857,9 +8926,8 @@ object frmMain: TfrmMain
       0100055749445448020002000A000D437279707446696C654E616D6504000100
       00000000075469705461736B04000100000000000854696D655461736B080008
       0000000000074461795461736B0400010000000000094D6F6E74685461736B04
-      000100000000000C4461794D6F6E74685461736B04000100000000000C4F6E65
-      496E4461795461736B040001000000000009506175736554696D650800080000
-      000000064F6E5461736B04000100000000000000}
+      000100000000000C4461794D6F6E74685461736B0400010000000000064F6E54
+      61736B04000100000000000000}
     Active = True
     Aggregates = <>
     FileName = 'ArcFold'
@@ -8918,12 +8986,6 @@ object frmMain: TfrmMain
     object dbSettingDayMonthTask: TIntegerField
       FieldName = 'DayMonthTask'
     end
-    object dbSettingOneInDayTask: TIntegerField
-      FieldName = 'OneInDayTask'
-    end
-    object dbSettingPauseTime: TDateTimeField
-      FieldName = 'PauseTime'
-    end
     object dbSettingOnTask: TIntegerField
       FieldName = 'OnTask'
     end
@@ -8943,12 +9005,15 @@ object frmMain: TfrmMain
     end
     object popOn: TMenuItem
       Caption = #1042#1082#1083#1102#1095#1080#1090#1100
+      OnClick = popOnClick
     end
     object popOff: TMenuItem
       Caption = #1042#1099#1082#1083#1102#1095#1080#1090#1100
+      OnClick = popOffClick
     end
     object popDel: TMenuItem
       Caption = #1059#1076#1072#1083#1080#1090#1100
+      OnClick = popDelClick
     end
   end
 end

@@ -94,6 +94,9 @@ var
 
 implementation
 
+uses
+  Main;
+
 {$R *.dfm}
 
 procedure TfrmSetTask.btnCancelClick(Sender: TObject);
@@ -142,6 +145,9 @@ begin
     txtPrefixName.SetFocus;
     exit;
   end;
+
+  // вызываем добавление
+  frmMain.AddSetting();
 
 end;
 

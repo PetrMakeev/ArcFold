@@ -29,8 +29,6 @@ type
     dbSettingDayTask: TIntegerField;
     dbSettingMonthTask: TIntegerField;
     dbSettingDayMonthTask: TIntegerField;
-    dbSettingOneInDayTask: TIntegerField;
-    dbSettingPauseTime: TDateTimeField;
     dsSetting: TDataSource;
     Button1: TButton;
     DBGrid1: TDBGrid;
@@ -47,6 +45,11 @@ type
     procedure Button1Click(Sender: TObject);
     procedure popTaskPopup(Sender: TObject);
     procedure popAddClick(Sender: TObject);
+
+    procedure AddSetting();
+    procedure popDelClick(Sender: TObject);
+    procedure popOnClick(Sender: TObject);
+    procedure popOffClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -63,6 +66,31 @@ uses
 
 {$R *.dfm}
 
+procedure TfrmMain.AddSetting;
+begin
+  // добавляем данные
+  dbSetting.Append;
+  dbSetting.FieldByName('NameTask').AsString := 'Имя задачи';
+  dbSetting.FieldByName('FromZip').AsString := 'Что архивировать';
+  dbSetting.FieldByName('ToZip').AsString := 'Куда архивировать';
+  dbSetting.FieldByName('PrefixName').AsString := 'Префик имени архива';
+  dbSetting.FieldByName('FormatZip').AsInteger := 0;
+  dbSetting.FieldByName('CompressZip').AsInteger := 2;
+  dbSetting.FieldByName('CryptZip').AsInteger := 0;
+  dbSetting.FieldByName('CryptWord').AsString := 'пароль';
+  dbSetting.FieldByName('CryptFileName').AsInteger := 0;
+  dbSetting.FieldByName('TipTask').AsInteger := 0;
+  dbSetting.FieldByName('TimeTask').AsDateTime := Now();
+  dbSetting.FieldByName('DayTask').AsInteger := 1;
+  dbSetting.FieldByName('MonthTask').AsInteger := 1;
+  dbSetting.FieldByName('DayMonthTask').AsInteger := 1;
+  dbSetting.FieldByName('OnTask').AsInteger := 1;
+  dbSetting.Post;
+
+
+
+end;
+
 procedure TfrmMain.AppEventsMinimize(Sender: TObject);
 begin
   TrayIcon.visible:=true;
@@ -76,10 +104,7 @@ end;
 procedure TfrmMain.Button1Click(Sender: TObject);
 begin
   // добавляем в локальную базу информацию о задаче
-  dbSetting.First;
-  dbSetting.Edit;
-  dbSettingFromZip.AsString := 'проверка';
-  dbSetting.Post;
+  addSetting();
 end;
 
 procedure TfrmMain.popAddClick(Sender: TObject);
@@ -88,6 +113,32 @@ begin
   frmSetTask.modeEdit := 'ADD';
   frmSetTask.initSet();
   frmSetTask.ShowModal ;
+
+end;
+
+procedure TfrmMain.popDelClick(Sender: TObject);
+begin
+
+  if MessageDlg('Удалить задачу?' ,mtWarning, [mbYes, mbNo], 0) = mrYes then
+    begin
+      dbSetting.Delete;
+    end;
+
+end;
+
+procedure TfrmMain.popOffClick(Sender: TObject);
+begin
+  dbSetting.Edit;
+  dbSetting.FieldByName('OnTask').AsInteger := 0;
+  dbSetting.Post;
+
+end;
+
+procedure TfrmMain.popOnClick(Sender: TObject);
+begin
+  dbSetting.Edit;
+  dbSetting.FieldByName('OnTask').AsInteger := 1;
+  dbSetting.Post;
 
 end;
 
@@ -111,6 +162,17 @@ begin
     popOff.Visible := False;
     popDel.Enabled := false;
   end;
+  if dbSettingOnTask.AsInteger = 1 then
+  begin
+    popOn.Visible := False;
+    popOff.Visible := true;
+  end
+  else
+  begin
+    popOn.Visible := true;
+    popOff.Visible := false;
+  end;
+
 end;
 
 end.
