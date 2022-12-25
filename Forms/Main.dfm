@@ -1,9 +1,11 @@
 object frmMain: TfrmMain
   Left = 0
   Top = 0
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
   Caption = #1056#1077#1079#1077#1088#1074#1085#1086#1077' '#1082#1086#1087#1080#1088#1086#1074#1072#1085#1080#1077
-  ClientHeight = 334
-  ClientWidth = 657
+  ClientHeight = 381
+  ClientWidth = 525
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -4407,11 +4409,11 @@ object frmMain: TfrmMain
   object DBGrid1: TDBGrid
     Left = 0
     Top = 0
-    Width = 657
-    Height = 265
+    Width = 525
+    Height = 241
     Align = alTop
     DataSource = dsSetting
-    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
     PopupMenu = popTask
     TabOrder = 1
     TitleFont.Charset = DEFAULT_CHARSET
@@ -4421,88 +4423,25 @@ object frmMain: TfrmMain
     TitleFont.Style = []
     Columns = <
       item
+        Alignment = taCenter
         Expanded = False
-        FieldName = 'ID'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'SelDay'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'SelMonth'
+        FieldName = 'OnTaskV'
+        Title.Alignment = taCenter
+        Title.Caption = #1040#1082#1090#1080#1074#1085#1086
+        Width = 58
         Visible = True
       end
       item
         Expanded = False
         FieldName = 'NameTask'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'FromZip'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'ToZip'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'PrefixName'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'FormatZip'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'CompressZip'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'CryptZip'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'CryptWord'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'CryptFileName'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'TipTask'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'TimeTask'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'DayMonthTask'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'OnTask'
+        Title.Alignment = taCenter
+        Title.Caption = #1053#1072#1079#1074#1072#1085#1080#1077' '#1079#1072#1076#1072#1095#1080
+        Width = 427
         Visible = True
       end>
   end
   object MainMenu1: TMainMenu
-    Left = 48
+    Left = 88
   end
   object TrayIcon: TTrayIcon
     Icon.Data = {
@@ -8921,6 +8860,7 @@ object frmMain: TfrmMain
     Aggregates = <>
     FileName = 'ArcFold'
     Params = <>
+    OnCalcFields = dbSettingCalcFields
     Left = 40
     Top = 160
     object dbSettingID: TIntegerField
@@ -8977,6 +8917,16 @@ object frmMain: TfrmMain
     end
     object dbSettingSelMonth: TStringField
       FieldName = 'SelMonth'
+    end
+    object dbSettingNameTaskV: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'NameTaskV'
+      Calculated = True
+    end
+    object dbSettingOnTaskV: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'OnTaskV'
+      Calculated = True
     end
   end
   object dsSetting: TDataSource

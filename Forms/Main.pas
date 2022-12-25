@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, Menus, ExtCtrls, StdCtrls, Vcl.AppEvnts, Data.DB, Vcl.Grids,
-  Vcl.DBGrids, Datasnap.DBClient, Vcl.DBCtrls;
+  Vcl.DBGrids, Datasnap.DBClient, Vcl.DBCtrls, System.StrUtils;
 
 type
   TfrmMain = class(TForm)
@@ -41,6 +41,8 @@ type
     DBGrid1: TDBGrid;
     dbSettingSelDay: TStringField;
     dbSettingSelMonth: TStringField;
+    dbSettingNameTaskV: TStringField;
+    dbSettingOnTaskV: TStringField;
     procedure popRestoreClick(Sender: TObject);
     procedure AppEventsMinimize(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -67,6 +69,7 @@ type
     procedure popOnClick(Sender: TObject);
     procedure popOffClick(Sender: TObject);
     procedure popEditClick(Sender: TObject);
+    procedure dbSettingCalcFields(DataSet: TDataSet);
   private
     { Private declarations }
   public
@@ -148,6 +151,13 @@ procedure TfrmMain.Button1Click(Sender: TObject);
 begin
   // добавляем в локальную базу информацию о задаче
   AddSetting();
+end;
+
+procedure TfrmMain.dbSettingCalcFields(DataSet: TDataSet);
+begin
+  // готовим вычисляемые поля
+  dbSettingOnTaskv.AsString := ifthen(dbSettingOnTask.AsInteger=1, '+', ' ')  ;
+
 end;
 
 procedure TfrmMain.popAddClick(Sender: TObject);
