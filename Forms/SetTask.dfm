@@ -16,28 +16,28 @@ object frmSetTask: TfrmSetTask
   object Label1: TLabel
     Left = 8
     Top = 5
-    Width = 96
+    Width = 92
     Height = 15
     Caption = #1053#1072#1079#1074#1072#1085#1080#1077' '#1079#1072#1076#1072#1095#1080
   end
   object Label2: TLabel
     Left = 8
     Top = 53
-    Width = 120
+    Width = 118
     Height = 15
     Caption = #1055#1072#1087#1082#1072' '#1076#1083#1103' '#1072#1088#1093#1080#1074#1072#1094#1080#1080
   end
   object Label3: TLabel
     Left = 8
     Top = 101
-    Width = 167
+    Width = 165
     Height = 15
     Caption = #1055#1072#1087#1082#1072' '#1076#1083#1103' '#1089#1086#1093#1088#1072#1085#1077#1085#1080#1103' '#1072#1088#1093#1080#1074#1072
   end
   object Label4: TLabel
     Left = 8
     Top = 149
-    Width = 125
+    Width = 124
     Height = 15
     Caption = #1055#1088#1077#1092#1080#1082' '#1080#1084#1077#1085#1080' '#1072#1088#1093#1080#1074#1072
   end
@@ -117,7 +117,7 @@ object frmSetTask: TfrmSetTask
       object Label9: TLabel
         Left = 12
         Top = 11
-        Width = 107
+        Width = 104
         Height = 15
         Caption = #1053#1072#1079#1085#1072#1095#1080#1090#1100' '#1079#1072#1076#1072#1085#1080#1077
       end
@@ -581,14 +581,14 @@ object frmSetTask: TfrmSetTask
       object Label5: TLabel
         Left = 26
         Top = 11
-        Width = 60
+        Width = 59
         Height = 15
         Caption = #1040#1088#1093#1080#1074#1072#1090#1086#1088
       end
       object Label6: TLabel
         Left = 210
         Top = 11
-        Width = 115
+        Width = 116
         Height = 15
         Caption = #1057#1090#1077#1087#1077#1085#1100' '#1082#1086#1084#1087#1088#1077#1089#1089#1080#1080
       end
@@ -603,7 +603,7 @@ object frmSetTask: TfrmSetTask
       object lblCryptWord2: TLabel
         Left = 210
         Top = 89
-        Width = 91
+        Width = 87
         Height = 15
         Caption = #1055#1086#1076#1090#1074#1077#1088#1078#1076#1077#1085#1080#1077
         Visible = False

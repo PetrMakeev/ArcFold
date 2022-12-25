@@ -124,15 +124,19 @@ end;
 procedure TfrmSetTask.btnFromZipClick(Sender: TObject);
 begin
   //обрабатываем выбор папки
+    SelectFolder.FileName := '';
   if txtFromZip.Text = '' then
     SelectFolder.DefaultFolder := 'c:\'
   else
     SelectFolder.DefaultFolder := txtFromZip.Text;
+
   if SelectFolder.Execute then
     txtFromZip.Text := SelectFolder.FileName;
 end;
 
 procedure TfrmSetTask.btnSaveClick(Sender: TObject);
+var
+  SelDay, SelMonth:string;
 begin
   //провер€ем заполнение данных
   if trim(txtNameTask.Text)='' then
@@ -162,6 +166,40 @@ begin
     txtPrefixName.SetFocus;
     exit;
   end;
+
+  if (cmbTipTask.ItemIndex = 1) and
+      (not chbWeek1.Checked) and
+      (not chbWeek2.Checked) and
+      (not chbWeek3.Checked) and
+      (not chbWeek4.Checked) and
+      (not chbWeek5.Checked) and
+      (not chbWeek6.Checked) and
+      (not chbWeek7.Checked) then
+  begin
+    showmessage('”кажите хот€ бы один день недели');
+    chbWeek1.SetFocus;
+    exit;
+  end;
+
+  if (cmbTipTask.ItemIndex = 2) and
+      (not chbMonth01.Checked) and
+      (not chbMonth02.Checked) and
+      (not chbMonth03.Checked) and
+      (not chbMonth04.Checked) and
+      (not chbMonth05.Checked) and
+      (not chbMonth06.Checked) and
+      (not chbMonth07.Checked) and
+      (not chbMonth08.Checked) and
+      (not chbMonth09.Checked) and
+      (not chbMonth10.Checked) and
+      (not chbMonth11.Checked) and
+      (not chbMonth12.Checked)  then
+  begin
+    showmessage('”кажите хот€ бы один мес€ц');
+    chbMonth01.SetFocus;
+    exit;
+  end;
+
 
   // вызываем добавление
   frmMain.SaveSetting(txtNameTask.Text,
@@ -197,7 +235,8 @@ begin
                         ifthen(chbMonth09.Checked, '1', '0') +
                         ifthen(chbMonth10.Checked, '1', '0') +
                         ifthen(chbMonth11.Checked, '1', '0') +
-                        ifthen(chbMonth12.Checked, '1', '0')
+                        ifthen(chbMonth12.Checked, '1', '0'),
+                      ifthen(modeEdit='ADD', 0, 1)
                       );
   close;
 
@@ -206,10 +245,12 @@ end;
 procedure TfrmSetTask.btnToZipClick(Sender: TObject);
 begin
   //обрабатываем выбор папки
+    SelectFolder.FileName := '';
   if txtToZip.Text = '' then
     SelectFolder.DefaultFolder := 'c:\'
   else
     SelectFolder.DefaultFolder := txtToZip.Text;
+
   if SelectFolder.Execute then
     txtToZip.Text := SelectFolder.FileName;
 end;
@@ -217,7 +258,7 @@ end;
 procedure TfrmSetTask.chbCryptZipClick(Sender: TObject);
 begin
   //настраиваем видимость настроек шифровани€
-  chbCryptFileName.Visible := chbCryptZip.Checked;
+  //chbCryptFileName.Visible := chbCryptZip.Checked;
   txtCryptWord1.Visible := chbCryptZip.Checked;
   txtCryptWord2.Visible := chbCryptZip.Checked;
   lblCryptWord1.Visible := chbCryptZip.Checked;

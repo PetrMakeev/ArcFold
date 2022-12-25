@@ -4,8 +4,8 @@ object frmMain: TfrmMain
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = #1056#1077#1079#1077#1088#1074#1085#1086#1077' '#1082#1086#1087#1080#1088#1086#1074#1072#1085#1080#1077
-  ClientHeight = 381
-  ClientWidth = 525
+  ClientHeight = 346
+  ClientWidth = 667
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -4397,51 +4397,144 @@ object frmMain: TfrmMain
     0000000000000000000000000000}
   Menu = MainMenu1
   TextHeight = 13
+  object Label1: TLabel
+    Left = 8
+    Top = 183
+    Width = 126
+    Height = 13
+    Caption = #1051#1086#1075' '#1074#1099#1087#1086#1083#1085#1077#1085#1080#1103' '#1079#1072#1076#1072#1095#1080':'
+  end
+  object pgTask: TPageControl
+    Left = 0
+    Top = 0
+    Width = 667
+    Height = 177
+    ActivePage = tabTask
+    Align = alTop
+    TabOrder = 1
+    ExplicitWidth = 663
+    object tabTask: TTabSheet
+      Caption = #1047#1072#1076#1072#1095#1080
+      object DBGrid1: TDBGrid
+        Left = 0
+        Top = 0
+        Width = 659
+        Height = 146
+        Align = alTop
+        DataSource = dsSetting
+        Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+        PopupMenu = popTask
+        TabOrder = 0
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'Tahoma'
+        TitleFont.Style = []
+        Columns = <
+          item
+            Alignment = taCenter
+            Expanded = False
+            FieldName = 'OnTaskV'
+            Title.Alignment = taCenter
+            Title.Caption = #1042#1082#1083'.'
+            Width = 28
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'NameTask'
+            Title.Alignment = taCenter
+            Title.Caption = #1053#1072#1079#1074#1072#1085#1080#1077' '#1079#1072#1076#1072#1095#1080
+            Width = 370
+            Visible = True
+          end
+          item
+            Alignment = taCenter
+            Expanded = False
+            FieldName = 'NextStart'
+            Title.Alignment = taCenter
+            Title.Caption = #1057#1083#1077#1076#1091#1102#1097#1080#1081' '#1089#1090#1072#1088#1090
+            Visible = True
+          end
+          item
+            Alignment = taCenter
+            Expanded = False
+            FieldName = 'LastStart'
+            Title.Alignment = taCenter
+            Title.Caption = #1055#1086#1089#1083#1077#1076#1085#1080#1081' '#1089#1090#1072#1088#1090
+            Visible = True
+          end>
+      end
+    end
+    object tabStack: TTabSheet
+      Caption = #1054#1095#1077#1088#1077#1076#1100' '#1079#1072#1076#1072#1095
+      ImageIndex = 1
+      object DBGrid2: TDBGrid
+        Left = 0
+        Top = 0
+        Width = 659
+        Height = 149
+        Align = alClient
+        DataSource = dsStack
+        Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+        TabOrder = 0
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'Tahoma'
+        TitleFont.Style = []
+        Columns = <
+          item
+            Alignment = taCenter
+            Expanded = False
+            FieldName = 'OnExec'
+            Title.Alignment = taCenter
+            Title.Caption = #1057#1090#1072#1090#1091#1089
+            Width = 75
+            Visible = True
+          end
+          item
+            Alignment = taCenter
+            Expanded = False
+            FieldName = 'StartTime'
+            Title.Alignment = taCenter
+            Title.Caption = #1057#1090#1072#1088#1090' '#1074
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'NameTask'
+            Title.Alignment = taCenter
+            Title.Caption = #1053#1072#1079#1074#1072#1085#1080#1077' '#1079#1072#1076#1072#1095#1080
+            Width = 287
+            Visible = True
+          end>
+      end
+    end
+  end
   object Button1: TButton
-    Left = 104
-    Top = 296
+    Left = 384
+    Top = 136
     Width = 75
-    Height = 25
+    Height = 26
     Caption = 'Button1'
     TabOrder = 0
     OnClick = Button1Click
   end
-  object DBGrid1: TDBGrid
+  object memLog: TMemo
     Left = 0
-    Top = 0
-    Width = 525
-    Height = 241
-    Align = alTop
-    DataSource = dsSetting
-    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
-    PopupMenu = popTask
-    TabOrder = 1
-    TitleFont.Charset = DEFAULT_CHARSET
-    TitleFont.Color = clWindowText
-    TitleFont.Height = -11
-    TitleFont.Name = 'Tahoma'
-    TitleFont.Style = []
-    Columns = <
-      item
-        Alignment = taCenter
-        Expanded = False
-        FieldName = 'OnTaskV'
-        Title.Alignment = taCenter
-        Title.Caption = #1040#1082#1090#1080#1074#1085#1086
-        Width = 58
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'NameTask'
-        Title.Alignment = taCenter
-        Title.Caption = #1053#1072#1079#1074#1072#1085#1080#1077' '#1079#1072#1076#1072#1095#1080
-        Width = 427
-        Visible = True
-      end>
+    Top = 200
+    Width = 667
+    Height = 146
+    Align = alBottom
+    ReadOnly = True
+    TabOrder = 2
+    ExplicitTop = 199
+    ExplicitWidth = 663
   end
   object MainMenu1: TMainMenu
-    Left = 88
+    Left = 80
+    Top = 56
   end
   object TrayIcon: TTrayIcon
     Icon.Data = {
@@ -8828,10 +8921,12 @@ object frmMain: TfrmMain
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000}
     PopupMenu = popTray
-    Left = 192
+    Left = 144
+    Top = 56
   end
   object popTray: TPopupMenu
-    Left = 312
+    Left = 152
+    Top = 104
     object popRestore: TMenuItem
       Caption = #1042#1086#1089#1089#1090#1072#1085#1086#1074#1080#1090#1100
       OnClick = popRestoreClick
@@ -8839,32 +8934,35 @@ object frmMain: TfrmMain
   end
   object AppEvents: TApplicationEvents
     OnMinimize = AppEventsMinimize
-    Left = 248
+    Left = 80
+    Top = 104
   end
   object dbSetting: TClientDataSet
     PersistDataPacket.Data = {
-      7F0100009619E0BD0100000018000000100000000000030000007F0102494404
-      00010000000000084E616D655461736B01004900000001000557494454480200
-      020064000746726F6D5A6970020049000000010005574944544802000200F401
-      05546F5A6970020049000000010005574944544802000200F4010A5072656669
-      784E616D65010049000000010005574944544802000200640009466F726D6174
-      5A697004000100000000000B436F6D70726573735A6970040001000000000008
-      43727970745A69700400010000000000094372797074576F7264010049000000
-      0100055749445448020002000A000D437279707446696C654E616D6504000100
-      00000000075469705461736B04000100000000000854696D655461736B080008
-      00000000000C4461794D6F6E74685461736B0400010000000000064F6E546173
-      6B04000100000000000653656C44617901004900000001000557494454480200
-      020014000853656C4D6F6E746801004900000001000557494454480200020014
-      000000}
+      DE0100009619E0BD010000001800000013000000000003000000DE0102494401
+      00490000000100055749445448020002001400084E616D655461736B01004900
+      000001000557494454480200020064000746726F6D5A69700200490000000100
+      05574944544802000200F40105546F5A69700200490000000100055749445448
+      02000200F4010A5072656669784E616D65010049000000010005574944544802
+      000200640009466F726D61745A697004000100000000000B436F6D7072657373
+      5A697004000100000000000843727970745A6970040001000000000009437279
+      7074576F72640100490000000100055749445448020002000A000D4372797074
+      46696C654E616D650400010000000000075469705461736B0400010000000000
+      0854696D655461736B08000800000000000C4461794D6F6E74685461736B0400
+      010000000000064F6E5461736B04000100000000000653656C44617901004900
+      000001000557494454480200020014000853656C4D6F6E746801004900000001
+      00055749445448020002001400074C6F675461736B04004B0000000100075355
+      42545950450200490005005465787400094E6578745374617274080008000000
+      0000094C61737453746172740100490000000100055749445448020002001400
+      0000}
     Active = True
     Aggregates = <>
     FileName = 'ArcFold'
     Params = <>
     OnCalcFields = dbSettingCalcFields
-    Left = 40
-    Top = 160
-    object dbSettingID: TIntegerField
-      AutoGenerateValue = arAutoInc
+    Left = 112
+    Top = 224
+    object dbSettingID: TStringField
       FieldName = 'ID'
     end
     object dbSettingNameTask: TStringField
@@ -8928,16 +9026,26 @@ object frmMain: TfrmMain
       FieldName = 'OnTaskV'
       Calculated = True
     end
+    object dbSettingLogTask: TMemoField
+      FieldName = 'LogTask'
+      BlobType = ftMemo
+    end
+    object dbSettingNextStart: TDateTimeField
+      FieldName = 'NextStart'
+    end
+    object dbSettingLastStartV: TStringField
+      FieldName = 'LastStart'
+    end
   end
   object dsSetting: TDataSource
     DataSet = dbSetting
-    Left = 112
-    Top = 160
+    Left = 176
+    Top = 224
   end
   object popTask: TPopupMenu
     OnPopup = popTaskPopup
-    Left = 232
-    Top = 160
+    Left = 220
+    Top = 64
     object popAdd: TMenuItem
       Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1079#1072#1076#1072#1095#1091
       OnClick = popAddClick
@@ -8961,5 +9069,35 @@ object frmMain: TfrmMain
       Caption = #1042#1099#1082#1083#1102#1095#1080#1090#1100
       OnClick = popOffClick
     end
+  end
+  object dbStack: TClientDataSet
+    PersistDataPacket.Data = {
+      7B0000009619E0BD0100000018000000040000000000030000007B0002494401
+      00490000000100055749445448020002001400084E616D655461736B01004900
+      0000010005574944544802000200140009537461727454696D65080008000000
+      0000064F6E4578656301004900000001000557494454480200020014000000}
+    Active = True
+    Aggregates = <>
+    FileName = 'agent'
+    Params = <>
+    Left = 264
+    Top = 224
+    object dbStackID: TStringField
+      FieldName = 'ID'
+    end
+    object dbStackNameTask: TStringField
+      FieldName = 'NameTask'
+    end
+    object dbStackStartTime: TDateTimeField
+      FieldName = 'StartTime'
+    end
+    object dbStackOnExec: TStringField
+      FieldName = 'OnExec'
+    end
+  end
+  object dsStack: TDataSource
+    DataSet = dbStack
+    Left = 312
+    Top = 224
   end
 end
