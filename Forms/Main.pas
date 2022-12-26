@@ -332,12 +332,7 @@ begin
     // определяем текущий день недели
     currDayWeek := DayOfTheWeek(Now());
 
-    // принимаем точку поиска за текущую дату и время
-    //findDateTime := EncodeDateTime(currYear, currMonth, currDay, currHour, currMinute, currSecond, currMSec);
-
-    // определяем дату время старта как конец слудующей недели
-    if True then
-
+    // принимаем точку поиска за дату и время позже на 2 недели
     DateTimeStart := IncDay(EncodeDateTime(currYear, currMonth, currDay, currHour, currMinute, currSecond, currMSec), 14-CurrDayWeek);
 
     //перебираем дни недели для определения дня старта задачи
@@ -348,15 +343,16 @@ begin
       if midStr(SelDay, I, 1) = '1' then
       begin
         //формируем на день недели дату и время старта
-        tmpDateTime := IncDay(EncodeDateTime(currYear, CurrMonth, currDay, tmpHour, tmpMinute, 0, 0), -currDayWeek + I + 1);
+        tmpDateTime := IncDay(EncodeDateTime(currYear, CurrMonth, currDay, tmpHour, tmpMinute, 0, 0), -currDayWeek + I );
  
         // если старт задачи  прошел то определяем его на следующую неделю
         if (currDateTime > tmpDateTime) then
           tmpDateTime := IncDay(EncodeDateTime(currYear, CurrMonth, currDay, tmpHour, tmpMinute, 0, 0), -currDayWeek + I + 1);
 
         // если найденное tmpDateTime позже currDateTime и DateTimeStart раньше определенного как самое крайнее сохраняем его
-        if (tmpDateTime < DateTimeStart) and (tmpDateTime > currDateTime) then
-          DateTimeStart := tmpDateTime;
+        if (tmpDateTime < DateTimeStart) then
+          if (tmpDateTime > currDateTime) then
+            DateTimeStart := tmpDateTime;
          
           
       end;
