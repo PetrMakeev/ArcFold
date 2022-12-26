@@ -73,7 +73,7 @@ type
                           TimeTask:TDateTime;
                           SelDay:string;
                           SelMonth:string;
-                          DayMonthTask:integer
+                          DayMonthTask:word
                           ):TDateTime;
     procedure SaveSetting(NameTask:string;
                        FromZip:string;
@@ -86,7 +86,7 @@ type
                        CryptFileName:integer;
                        TipTask:integer;
                        TimeTask:TDatetime;
-                       DayMonthTask:integer;
+                       DayMonthTask:word;
                        OnTask:integer;
                        SelDay:string;
                        SelMonth:string;
@@ -254,7 +254,7 @@ end;
 
 procedure TfrmMain.SaveSetting(NameTask, FromZip, ToZip, PrefixName: string;
   FormatZip, CompressZip, CryptZip: integer; CryptWord: string; CryptFileName,
-  TipTask: integer; TimeTask: TDatetime; DayMonthTask, OnTask: integer; SelDay,
+  TipTask: integer; TimeTask: TDatetime; DayMonthTask: Word; OnTask: integer; SelDay,
   SelMonth: string; modeEdit:integer);
 var
   tmpDT:Tdatetime;
@@ -278,7 +278,7 @@ begin
 
   dbSetting.FieldByName('TipTask').AsInteger := TipTask;
   dbSetting.FieldByName('TimeTask').AsDateTime := TimeTask;
-  dbSetting.FieldByName('DayMonthTask').AsInteger := DayMonthTask;
+  dbSetting.FieldByName('DayMonthTask').AsLargeInt := DayMonthTask;
   dbSetting.FieldByName('OnTask').AsInteger := OnTask;
   dbSetting.FieldByName('SelDay').AsString := SelDay;
   dbSetting.FieldByName('SelMonth').AsString := SelMonth;
@@ -295,18 +295,15 @@ end;
 
 
 function TfrmMain.FindNextStart(TipTask: integer; TimeTask: TDateTime; SelDay,
-  SelMonth: string; DayMonthTask: integer): TDateTime;
+  SelMonth: string; DayMonthTask: word): TDateTime;
 var
   tmpYear, tmpMonth, tmpDay, tmpHour, tmpMinute, tmpSecond, tmpMSec: Word;
   tmpDateTime, DateTimeStart, currDateTime, findDateTime:TDateTime;
   currYear, currMonth, currDay, currHour, currMinute, currSecond, currMSec: Word;
-  currDayWeek: word;
-  findDay: Word;
+  currDayWeek, currMonthYear: word;
   I: Word;
-  noDateTime: Boolean;
 begin
 
-  noDateTime := false;
   //определяем время следующего старта задачи
   DecodeTime(TimeTask, tmpHour, tmpMinute, tmpSecond, tmpMSec);
 
@@ -332,7 +329,7 @@ begin
     // определяем текущий день недели
     currDayWeek := DayOfTheWeek(Now());
 
-    // принимаем точку поиска за дату и время позже на 2 недели
+    // принимаем точку поиска за дату и время позже на 14 дней
     DateTimeStart := IncDay(EncodeDateTime(currYear, currMonth, currDay, currHour, currMinute, currSecond, currMSec), 14-CurrDayWeek);
 
     //перебираем дни недели для определения дня старта задачи
@@ -353,26 +350,46 @@ begin
         if (tmpDateTime < DateTimeStart) then
           if (tmpDateTime > currDateTime) then
             DateTimeStart := tmpDateTime;
-         
-          
-      end;
 
-      
+      end;
 
     end;
 
-
-
-
-
-     
-
-
-
-
-
    end;
 
+   //ежемесячно
+   if TipTask=2 then
+   begin
+
+    // определяем текущий месяц
+    currMonthYear := MonthOfTheYear(Now());
+
+    // принимаем точку поиска за дату и время позже на 24 месяцев
+    DateTimeStart := IncMonth(EncodeDateTime(currYear, currMonth, currDay, currHour, currMinute, currSecond, currMSec), 24-currMonthYear);
+
+    // перебираем месяцы для определения дня старта задачи
+    for I := 1 to 12 do
+    begin
+      // проверить есть ли на данный день недели старт задачи
+      if midStr(SelMonth, I, 1) = '1' then
+      begin
+
+        //формируем на день недели дату и время старта
+        tmpDateTime := IncMonth(EncodeDateTime(currYear, I, DayMonthTask, tmpHour, tmpMinute, 0, 0), 0); // -currMonthYear + I );
+
+        // если старт задачи  прошел то определяем его на следующий месяц
+        if (currDateTime > tmpDateTime) then
+          tmpDateTime := IncMonth(EncodeDateTime(currYear, I, DayMonthTask, tmpHour, tmpMinute, 0, 0), 12); //-currMonthYear + I + 12);
+
+        // если найденное tmpDateTime позже currDateTime и DateTimeStart раньше определенного как самое крайнее сохраняем его
+        if (tmpDateTime < DateTimeStart) then
+          if (tmpDateTime > currDateTime) then
+            DateTimeStart := tmpDateTime;
+
+      end;
+    end;
+
+   end;
 
 
   Result := DateTimeStart;

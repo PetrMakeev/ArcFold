@@ -87,7 +87,7 @@ type
                        CryptFileName:integer;
                        TipTask:integer;
                        TimeTask:TDatetime;
-                       DayMonthTask:integer;
+                       DayMonthTask:Word;
                        OnTask:integer;
                        SelDay:string;
                        SelMonth:string);
@@ -322,7 +322,7 @@ end;
 
 procedure TfrmSetTask.initEDIT(NameTask, FromZip, ToZip, PrefixName: string;
   FormatZip, CompressZip, CryptZip: integer; CryptWord: string; CryptFileName,
-  TipTask: integer; TimeTask: TDatetime;  DayMonthTask,
+  TipTask: integer; TimeTask: TDatetime;  DayMonthTask: Word;
   OnTask: integer; SelDay:string; SelMonth:string);
 begin
   //
