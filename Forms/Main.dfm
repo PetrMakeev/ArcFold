@@ -4409,9 +4409,9 @@ object frmMain: TfrmMain
     Top = 0
     Width = 667
     Height = 177
-    ActivePage = tabTask
+    ActivePage = tabStack
     Align = alTop
-    TabOrder = 1
+    TabOrder = 0
     ExplicitWidth = 663
     object tabTask: TTabSheet
       Caption = #1047#1072#1076#1072#1095#1080
@@ -4513,15 +4513,6 @@ object frmMain: TfrmMain
       end
     end
   end
-  object Button1: TButton
-    Left = 384
-    Top = 136
-    Width = 75
-    Height = 26
-    Caption = 'Button1'
-    TabOrder = 0
-    OnClick = Button1Click
-  end
   object memLog: TMemo
     Left = 0
     Top = 200
@@ -4529,13 +4520,13 @@ object frmMain: TfrmMain
     Height = 146
     Align = alBottom
     ReadOnly = True
-    TabOrder = 2
+    TabOrder = 1
     ExplicitTop = 199
     ExplicitWidth = 663
   end
   object MainMenu1: TMainMenu
-    Left = 80
-    Top = 56
+    Left = 56
+    Top = 104
   end
   object TrayIcon: TTrayIcon
     Icon.Data = {
@@ -8922,11 +8913,11 @@ object frmMain: TfrmMain
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000}
     PopupMenu = popTray
-    Left = 144
-    Top = 56
+    Left = 184
+    Top = 104
   end
   object popTray: TPopupMenu
-    Left = 152
+    Left = 320
     Top = 104
     object popRestore: TMenuItem
       Caption = #1042#1086#1089#1089#1090#1072#1085#1086#1074#1080#1090#1100
@@ -8935,7 +8926,7 @@ object frmMain: TfrmMain
   end
   object AppEvents: TApplicationEvents
     OnMinimize = AppEventsMinimize
-    Left = 80
+    Left = 256
     Top = 104
   end
   object dbSetting: TClientDataSet
@@ -9049,8 +9040,8 @@ object frmMain: TfrmMain
   end
   object popTask: TPopupMenu
     OnPopup = popTaskPopup
-    Left = 220
-    Top = 64
+    Left = 396
+    Top = 104
     object popAdd: TMenuItem
       Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1079#1072#1076#1072#1095#1091
       OnClick = popAddClick
@@ -9104,5 +9095,10 @@ object frmMain: TfrmMain
     DataSet = dbStack
     Left = 312
     Top = 224
+  end
+  object TimerTask: TTimer
+    Interval = 15000
+    Left = 476
+    Top = 104
   end
 end

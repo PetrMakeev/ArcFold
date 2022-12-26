@@ -28,7 +28,6 @@ type
     dbSettingTimeTask: TDateTimeField;
     dbSettingDayMonthTask: TIntegerField;
     dsSetting: TDataSource;
-    Button1: TButton;
     popTask: TPopupMenu;
     popAdd: TMenuItem;
     popOn: TMenuItem;
@@ -60,9 +59,9 @@ type
     dbSettingNextStart: TDateTimeField;
     dbSettingLastStartV: TStringField;
     dbSettingNextStartStr: TStringField;
+    TimerTask: TTimer;
     procedure popRestoreClick(Sender: TObject);
     procedure AppEventsMinimize(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
     procedure popTaskPopup(Sender: TObject);
     procedure popAddClick(Sender: TObject);
 
@@ -75,6 +74,7 @@ type
                           SelMonth:string;
                           DayMonthTask:word
                           ):TDateTime;
+
     procedure SaveSetting(NameTask:string;
                        FromZip:string;
                        ToZip:string;
@@ -91,6 +91,11 @@ type
                        SelDay:string;
                        SelMonth:string;
                        modeEdit:integer);
+
+    procedure TaskToStack(ID:string;
+                          NameTask:string;
+                          StartTime:TDatetime);
+
     procedure popDelClick(Sender: TObject);
     procedure popOnClick(Sender: TObject);
     procedure popOffClick(Sender: TObject);
@@ -159,12 +164,6 @@ begin
   ShowWindow(Application.Handle,SW_HIDE);  // —крываем кнопку с TaskBar'а
   SetWindowLong(Application.Handle, GWL_EXSTYLE,
   GetWindowLong(Application.Handle, GWL_EXSTYLE) or (not WS_EX_APPWINDOW));
-end;
-
-procedure TfrmMain.Button1Click(Sender: TObject);
-begin
-  // добавл€ем в локальную базу информацию о задаче
-  AddSetting();
 end;
 
 procedure TfrmMain.dbSettingCalcFields(DataSet: TDataSet);
@@ -293,6 +292,30 @@ begin
 end;
 
 
+
+procedure TfrmMain.TaskToStack(ID:string; NameTask:string; StartTime:TDatetime);
+var
+  currDT:TDatetime;
+  currRecNo:integer;
+begin
+  //провер€ем наличие в стеке задач
+  dbStack.First;
+  if dbStack.Eof then
+  begin
+    //стек пуст запускаем задачу
+    memLog.Lines.Add('добавл€ем задачу -' + NameTask + ' - ' + DateTimeToStr(StartTime));
+    dbStack.Append;
+    dbStack.FieldByName('TipTask').AsString := ID; //!!!!
+    dbStack.FieldByName('NameTask').AsString := NameTask; //!!!!
+    dbStack.FieldByName('StartTime').AsDateTime := StartTime; //!!!!
+    dbStack.FieldByName('OnExec').AsInteger := 1; //!!!!
+    dbStack.Post;
+
+  end;
+
+
+
+end;
 
 function TfrmMain.FindNextStart(TipTask: integer; TimeTask: TDateTime; SelDay,
   SelMonth: string; DayMonthTask: word): TDateTime;
