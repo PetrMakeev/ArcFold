@@ -380,7 +380,7 @@ begin
 
 
   Result := DateTimeStart;
-  //Result := EncodeDateTime (tmpYear, tmpMonth, tmpDay, tmpHour, tmpMinute, tmpSecond, tmpMSec); // заглушка
+
 end;
 
 end.
