@@ -4451,9 +4451,10 @@ object frmMain: TfrmMain
           item
             Alignment = taCenter
             Expanded = False
-            FieldName = 'NextStart'
+            FieldName = 'NextStartStr'
             Title.Alignment = taCenter
             Title.Caption = #1057#1083#1077#1076#1091#1102#1097#1080#1081' '#1089#1090#1072#1088#1090
+            Width = 110
             Visible = True
           end
           item
@@ -8939,7 +8940,7 @@ object frmMain: TfrmMain
   end
   object dbSetting: TClientDataSet
     PersistDataPacket.Data = {
-      DE0100009619E0BD010000001800000013000000000003000000DE0102494401
+      FF0100009619E0BD010000001800000014000000000003000000FF0102494401
       00490000000100055749445448020002001400084E616D655461736B01004900
       000001000557494454480200020064000746726F6D5A69700200490000000100
       05574944544802000200F40105546F5A69700200490000000100055749445448
@@ -8954,7 +8955,8 @@ object frmMain: TfrmMain
       00055749445448020002001400074C6F675461736B04004B0000000100075355
       42545950450200490005005465787400094E6578745374617274080008000000
       0000094C61737453746172740100490000000100055749445448020002001400
-      0000}
+      0C4E657874537461727453747201004900000001000557494454480200020014
+      000000}
     Active = True
     Aggregates = <>
     FileName = 'ArcFold'
@@ -9035,6 +9037,9 @@ object frmMain: TfrmMain
     end
     object dbSettingLastStartV: TStringField
       FieldName = 'LastStart'
+    end
+    object dbSettingNextStartStr: TStringField
+      FieldName = 'NextStartStr'
     end
   end
   object dsSetting: TDataSource

@@ -59,6 +59,7 @@ type
     dbStackOnExec: TStringField;
     dbSettingNextStart: TDateTimeField;
     dbSettingLastStartV: TStringField;
+    dbSettingNextStartStr: TStringField;
     procedure popRestoreClick(Sender: TObject);
     procedure AppEventsMinimize(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -255,9 +256,14 @@ procedure TfrmMain.SaveSetting(NameTask, FromZip, ToZip, PrefixName: string;
   FormatZip, CompressZip, CryptZip: integer; CryptWord: string; CryptFileName,
   TipTask: integer; TimeTask: TDatetime; DayMonthTask, OnTask: integer; SelDay,
   SelMonth: string; modeEdit:integer);
+var
+  tmpDT:Tdatetime;
 begin
   // Сохраняем даныные
-  dbSetting.Edit;
+  if modeEdit=0 then
+    dbSetting.Append
+  else
+    dbSetting.Edit;
   dbSetting.FieldByName('ID').AsString := DateTimeToStr(Now());
   dbSetting.FieldByName('NameTask').AsString := NameTask;
   dbSetting.FieldByName('FromZip').AsString := FromZip;
@@ -276,7 +282,11 @@ begin
   dbSetting.FieldByName('OnTask').AsInteger := OnTask;
   dbSetting.FieldByName('SelDay').AsString := SelDay;
   dbSetting.FieldByName('SelMonth').AsString := SelMonth;
-  dbSetting.FieldByName('NextStart').AsDateTime := FindNextStart(TipTask, TimeTask, SelDay, SelMonth, DayMonthTask); //!!!!!!!!!!!!!
+
+  tmpDT := FindNextStart(TipTask, TimeTask, SelDay, SelMonth, DayMonthTask)  ;
+
+  dbSetting.FieldByName('NextStart').AsDateTime := tmpDT; //!!!!!!!!!!!!!
+  dbSetting.FieldByName('NextStartStr').AsString := DateTimeToStr(tmpDT);
   if modeEdit=0 then
     dbSetting.FieldByName('LastStart').AsString := 'Никогда' ;
   dbSetting.Post;
@@ -288,7 +298,7 @@ function TfrmMain.FindNextStart(TipTask: integer; TimeTask: TDateTime; SelDay,
   SelMonth: string; DayMonthTask: integer): TDateTime;
 var
   tmpYear, tmpMonth, tmpDay, tmpHour, tmpMinute, tmpSecond, tmpMSec: Word;
-  tmpDateTime1, findDateTimeDayWeek:TDateTime;
+  tmpDateTime, DateTimeStart, currDateTime, findDateTime:TDateTime;
   currYear, currMonth, currDay, currHour, currMinute, currSecond, currMSec: Word;
   currDayWeek: word;
   findDay: Word;
@@ -299,58 +309,61 @@ begin
   noDateTime := false;
   //определяем время следующего старта задачи
   DecodeTime(TimeTask, tmpHour, tmpMinute, tmpSecond, tmpMSec);
-  //определяем текущее время
+
+  //фиксируем текущие дату и время
   DecodeDateTime(Now(), currYear, currMonth, currDay, currHour, currMinute, currSecond, currMSec);
+  currDateTime := EncodeDateTime(currYear, currMonth, currDay, currHour, currMinute, 0, 0);
 
   //ежедневно
   if TipTask=0 then
   begin
-    tmpDateTime1 := EncodeDateTime(currYear, currMonth, currDay, tmpHour, tmpMinute, 0, 0);
+    tmpDateTime := EncodeDateTime(currYear, currMonth, currDay, tmpHour, tmpMinute, 0, 0);
     //проверяем прошло время запуска сегодня или нет
-    if Now() > tmpDateTime1 then
-      tmpDateTime1 := EncodeDateTime(currYear, CurrMonth, CurrDay + 1, tmpHour, tmpMinute, 0, 0)
-    else
-      tmpDateTime1 := EncodeDateTime(currYear, CurrMonth, CurrDay, tmpHour, tmpMinute, 0, 0);
+    if currDateTime > tmpDateTime then
+      tmpDateTime := EncodeDateTime(currYear, CurrMonth, CurrDay + 1, tmpHour, tmpMinute, 0, 0);
 
+    DateTimeStart := tmpDateTime;  
   end;
 
   //Еженедельно
   if TipTask=1 then
   begin
 
+    // определяем текущий день недели
+    currDayWeek := DayOfTheWeek(Now());
 
-    //проверяем указаны дни недели или нет
-    if pos(SelDay,'1')>0  then
+    // принимаем точку поиска за текущую дату и время
+    //findDateTime := EncodeDateTime(currYear, currMonth, currDay, currHour, currMinute, currSecond, currMSec);
+
+    // определяем дату время старта как конец слудующей недели
+    if True then
+
+    DateTimeStart := IncDay(EncodeDateTime(currYear, currMonth, currDay, currHour, currMinute, currSecond, currMSec), 14-CurrDayWeek);
+
+    //перебираем дни недели для определения дня старта задачи
+    for I := 1 to 7 do
     begin
 
-      // определяем текущий день недели
-      currDayWeek := DayOfTheWeek(Now());
-
-      // принимаем точку поиска за текущую дату и время
-      findDateTimeDayWeek := Now();
-
-      //перебираем дни недели для определения дня старта задачи
-      for I := 1 to 7 do
+      // проверить есть ли на данный день недели старт задачи
+      if midStr(SelDay, I, 1) = '1' then
       begin
+        //формируем на день недели дату и время старта
+        tmpDateTime := IncDay(EncodeDateTime(currYear, CurrMonth, currDay, tmpHour, tmpMinute, 0, 0), -currDayWeek + I + 1);
+ 
+        // если старт задачи  прошел то определяем его на следующую неделю
+        if (currDateTime > tmpDateTime) then
+          tmpDateTime := IncDay(EncodeDateTime(currYear, CurrMonth, currDay, tmpHour, tmpMinute, 0, 0), -currDayWeek + I + 1);
 
-        // проверить есть ли на данный день недели старт задачи
-
-
-//        // находим время по циклу даты недели со временем старта задачи
-//        tmpDateTime1 := EncodeDateTime(currYear, CurrMonth, CurrDay - currDayWeek + I, tmpHour, tmpMinute, 0, 0);
-//
-//        // проверяем точку поиска и время по циклу даты со временм старта задачи
-//        // c учетом что день недели старта задачи не боль
-//        if (findDateTimeDayWeek > tmpDateTime1) and (I < currDayOffWeek) then
-//        begin
-//          //время еще не прошло прошло
-//
-//
-//        end;
-
-
-
+        // если найденное tmpDateTime позже currDateTime и DateTimeStart раньше определенного как самое крайнее сохраняем его
+        if (tmpDateTime < DateTimeStart) and (tmpDateTime > currDateTime) then
+          DateTimeStart := tmpDateTime;
+         
+          
       end;
+
+      
+
+    end;
 
 
 
@@ -360,16 +373,13 @@ begin
 
 
 
-    end
-    else
-      // не указаны дни неделя для запуска задач
-      noDateTime := true;
+
 
    end;
 
 
 
-  Result := Now()
+  Result := DateTimeStart;
   //Result := EncodeDateTime (tmpYear, tmpMonth, tmpDay, tmpHour, tmpMinute, tmpSecond, tmpMSec); // заглушка
 end;
 
