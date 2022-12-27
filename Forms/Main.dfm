@@ -4396,6 +4396,7 @@ object frmMain: TfrmMain
     0000000000000000000000000000000000000000000000000000000000000000
     0000000000000000000000000000}
   Menu = MainMenu1
+  OnCreate = FormCreate
   TextHeight = 13
   object Label1: TLabel
     Left = 8
@@ -4409,7 +4410,7 @@ object frmMain: TfrmMain
     Top = 0
     Width = 667
     Height = 177
-    ActivePage = tabStack
+    ActivePage = tabTask
     Align = alTop
     TabOrder = 0
     ExplicitWidth = 663
@@ -8985,10 +8986,9 @@ object frmMain: TfrmMain
     Top = 104
   end
   object ADOConn: TADOConnection
-    Connected = True
     ConnectionString = 
       'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=arcFold.mdb;Persist' +
-      ' Security Info=False'
+      ' Security Info=False;'
     LoginPrompt = False
     Mode = cmShareDenyNone
     Provider = 'Microsoft.Jet.OLEDB.4.0'
@@ -8996,7 +8996,6 @@ object frmMain: TfrmMain
     Top = 232
   end
   object dbSetting: TADOTable
-    Active = True
     Connection = ADOConn
     CursorType = ctStatic
     Filtered = True
@@ -9091,7 +9090,6 @@ object frmMain: TfrmMain
     end
   end
   object dbStack: TADOTable
-    Active = True
     Connection = ADOConn
     CursorType = ctStatic
     TableName = 'Stack'
@@ -9116,5 +9114,11 @@ object frmMain: TfrmMain
       FieldName = 'onExec'
       Size = 255
     end
+  end
+  object dbFindTask: TADOQuery
+    Connection = ADOConn
+    Parameters = <>
+    Left = 392
+    Top = 232
   end
 end

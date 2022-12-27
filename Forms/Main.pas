@@ -64,6 +64,7 @@ type
     dbStackNameTask: TWideStringField;
     dbStackStartTime: TDateTimeField;
     dbStackonExec: TWideStringField;
+    dbFindTask: TADOQuery;
     procedure popRestoreClick(Sender: TObject);
     procedure AppEventsMinimize(Sender: TObject);
     procedure popTaskPopup(Sender: TObject);
@@ -107,6 +108,7 @@ type
     procedure dbSettingCalcFields(DataSet: TDataSet);
     procedure Button1Click(Sender: TObject);
     procedure TimerTaskTimer(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -463,6 +465,17 @@ begin
 
   Result := DateTimeStart;
 
+end;
+
+procedure TfrmMain.FormCreate(Sender: TObject);
+var
+  pathExe:string;
+begin
+  pathExe := ExtractFilePath(Application.ExeName);
+  AdoConn.ConnectionString := 'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=' + pathExe + 'arcFold.mdb;Persist Security Info=False;';
+  AdoConn.Connected := true;
+  if not dbSetting.Active then dbSetting.Active := true;
+  if not dbStack.Active then dbStack.Active := true;
 end;
 
 end.
