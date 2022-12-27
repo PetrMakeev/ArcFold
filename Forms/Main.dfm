@@ -4409,7 +4409,7 @@ object frmMain: TfrmMain
     Top = 0
     Width = 667
     Height = 177
-    ActivePage = tabTask
+    ActivePage = tabStack
     Align = alTop
     TabOrder = 0
     ExplicitWidth = 663
@@ -4445,7 +4445,7 @@ object frmMain: TfrmMain
             FieldName = 'NameTask'
             Title.Alignment = taCenter
             Title.Caption = #1053#1072#1079#1074#1072#1085#1080#1077' '#1079#1072#1076#1072#1095#1080
-            Width = 370
+            Width = 347
             Visible = True
           end
           item
@@ -4454,7 +4454,7 @@ object frmMain: TfrmMain
             FieldName = 'NextStartStr'
             Title.Alignment = taCenter
             Title.Caption = #1057#1083#1077#1076#1091#1102#1097#1080#1081' '#1089#1090#1072#1088#1090
-            Width = 110
+            Width = 115
             Visible = True
           end
           item
@@ -4463,6 +4463,7 @@ object frmMain: TfrmMain
             FieldName = 'LastStart'
             Title.Alignment = taCenter
             Title.Caption = #1055#1086#1089#1083#1077#1076#1085#1080#1081' '#1089#1090#1072#1088#1090
+            Width = 122
             Visible = True
           end>
       end
@@ -4488,7 +4489,7 @@ object frmMain: TfrmMain
           item
             Alignment = taCenter
             Expanded = False
-            FieldName = 'OnExec'
+            FieldName = 'onExec'
             Title.Alignment = taCenter
             Title.Caption = #1057#1090#1072#1090#1091#1089
             Width = 75
@@ -8938,114 +8939,10 @@ object frmMain: TfrmMain
     Left = 256
     Top = 104
   end
-  object dbSetting: TClientDataSet
-    PersistDataPacket.Data = {
-      FF0100009619E0BD010000001800000014000000000003000000FF0102494401
-      00490000000100055749445448020002001400084E616D655461736B01004900
-      000001000557494454480200020064000746726F6D5A69700200490000000100
-      05574944544802000200F40105546F5A69700200490000000100055749445448
-      02000200F4010A5072656669784E616D65010049000000010005574944544802
-      000200640009466F726D61745A697004000100000000000B436F6D7072657373
-      5A697004000100000000000843727970745A6970040001000000000009437279
-      7074576F72640100490000000100055749445448020002000A000D4372797074
-      46696C654E616D650400010000000000075469705461736B0400010000000000
-      0854696D655461736B08000800000000000C4461794D6F6E74685461736B0400
-      010000000000064F6E5461736B04000100000000000653656C44617901004900
-      000001000557494454480200020014000853656C4D6F6E746801004900000001
-      00055749445448020002001400074C6F675461736B04004B0000000100075355
-      42545950450200490005005465787400094E6578745374617274080008000000
-      0000094C61737453746172740100490000000100055749445448020002001400
-      0C4E657874537461727453747201004900000001000557494454480200020014
-      000000}
-    Active = True
-    Aggregates = <>
-    FileName = 'ArcFold'
-    Params = <>
-    OnCalcFields = dbSettingCalcFields
-    Left = 112
-    Top = 224
-    object dbSettingID: TStringField
-      FieldName = 'ID'
-    end
-    object dbSettingNameTask: TStringField
-      DisplayWidth = 20
-      FieldName = 'NameTask'
-      Size = 100
-    end
-    object dbSettingFromZip: TStringField
-      FieldName = 'FromZip'
-      Size = 500
-    end
-    object dbSettingToZip: TStringField
-      FieldName = 'ToZip'
-      Size = 500
-    end
-    object dbSettingPrefixName: TStringField
-      FieldName = 'PrefixName'
-      Size = 100
-    end
-    object dbSettingFormatZip: TIntegerField
-      FieldName = 'FormatZip'
-    end
-    object dbSettingCompressZip: TIntegerField
-      FieldName = 'CompressZip'
-    end
-    object dbSettingCryptZip: TIntegerField
-      FieldName = 'CryptZip'
-    end
-    object dbSettingCryptWord: TStringField
-      FieldName = 'CryptWord'
-      Size = 10
-    end
-    object dbSettingCryptFileName: TIntegerField
-      FieldName = 'CryptFileName'
-    end
-    object dbSettingTipTask: TIntegerField
-      FieldName = 'TipTask'
-    end
-    object dbSettingTimeTask: TDateTimeField
-      FieldName = 'TimeTask'
-    end
-    object dbSettingDayMonthTask: TIntegerField
-      FieldName = 'DayMonthTask'
-    end
-    object dbSettingOnTask: TIntegerField
-      FieldName = 'OnTask'
-    end
-    object dbSettingSelDay: TStringField
-      FieldName = 'SelDay'
-    end
-    object dbSettingSelMonth: TStringField
-      FieldName = 'SelMonth'
-    end
-    object dbSettingNameTaskV: TStringField
-      FieldKind = fkCalculated
-      FieldName = 'NameTaskV'
-      Calculated = True
-    end
-    object dbSettingOnTaskV: TStringField
-      FieldKind = fkCalculated
-      FieldName = 'OnTaskV'
-      Calculated = True
-    end
-    object dbSettingLogTask: TMemoField
-      FieldName = 'LogTask'
-      BlobType = ftMemo
-    end
-    object dbSettingNextStart: TDateTimeField
-      FieldName = 'NextStart'
-    end
-    object dbSettingLastStartV: TStringField
-      FieldName = 'LastStart'
-    end
-    object dbSettingNextStartStr: TStringField
-      FieldName = 'NextStartStr'
-    end
-  end
   object dsSetting: TDataSource
     DataSet = dbSetting
     Left = 176
-    Top = 224
+    Top = 232
   end
   object popTask: TPopupMenu
     OnPopup = popTaskPopup
@@ -9075,40 +8972,149 @@ object frmMain: TfrmMain
       OnClick = popOffClick
     end
   end
-  object dbStack: TClientDataSet
-    PersistDataPacket.Data = {
-      7B0000009619E0BD0100000018000000040000000000030000007B0002494401
-      00490000000100055749445448020002001400084E616D655461736B01004900
-      0000010005574944544802000200140009537461727454696D65080008000000
-      0000064F6E4578656301004900000001000557494454480200020014000000}
-    Active = True
-    Aggregates = <>
-    FileName = 'agent'
-    Params = <>
-    Left = 264
-    Top = 224
-    object dbStackID: TStringField
-      FieldName = 'ID'
-    end
-    object dbStackNameTask: TStringField
-      FieldName = 'NameTask'
-    end
-    object dbStackStartTime: TDateTimeField
-      FieldName = 'StartTime'
-    end
-    object dbStackOnExec: TStringField
-      FieldName = 'OnExec'
-    end
-  end
   object dsStack: TDataSource
     DataSet = dbStack
     Left = 312
-    Top = 224
+    Top = 232
   end
   object TimerTask: TTimer
+    Enabled = False
     Interval = 10000
     OnTimer = TimerTaskTimer
     Left = 476
     Top = 104
+  end
+  object ADOConn: TADOConnection
+    Connected = True
+    ConnectionString = 
+      'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=arcFold.mdb;Persist' +
+      ' Security Info=False'
+    LoginPrompt = False
+    Mode = cmShareDenyNone
+    Provider = 'Microsoft.Jet.OLEDB.4.0'
+    Left = 40
+    Top = 232
+  end
+  object dbSetting: TADOTable
+    Active = True
+    Connection = ADOConn
+    CursorType = ctStatic
+    Filtered = True
+    OnCalcFields = dbSettingCalcFields
+    TableName = 'Task'
+    Left = 104
+    Top = 232
+    object dbSettingNameTask: TWideStringField
+      FieldName = 'NameTask'
+      Size = 200
+    end
+    object dbSettingFromZip: TWideStringField
+      FieldName = 'FromZip'
+      Size = 255
+    end
+    object dbSettingToZip: TWideStringField
+      FieldName = 'ToZip'
+      Size = 255
+    end
+    object dbSettingPrefixName: TWideStringField
+      FieldName = 'PrefixName'
+      Size = 255
+    end
+    object dbSettingFormatZip: TSmallintField
+      FieldName = 'FormatZip'
+    end
+    object dbSettingCompressZip: TSmallintField
+      FieldName = 'CompressZip'
+    end
+    object dbSettingCryptZip: TSmallintField
+      FieldName = 'CryptZip'
+    end
+    object dbSettingCryptWord: TWideStringField
+      FieldName = 'CryptWord'
+      Size = 50
+    end
+    object dbSettingCryptFileName: TSmallintField
+      FieldName = 'CryptFileName'
+    end
+    object dbSettingTipTask: TSmallintField
+      FieldName = 'TipTask'
+    end
+    object dbSettingTimeTask: TDateTimeField
+      FieldName = 'TimeTask'
+    end
+    object dbSettingDayMonthTask: TSmallintField
+      FieldName = 'DayMonthTask'
+    end
+    object dbSettingOnTask: TSmallintField
+      FieldName = 'OnTask'
+    end
+    object dbSettingSelDay: TWideStringField
+      FieldName = 'SelDay'
+      Size = 7
+    end
+    object dbSettingSelMonth: TWideStringField
+      FieldName = 'SelMonth'
+      Size = 12
+    end
+    object dbSettingLogTask: TWideMemoField
+      FieldName = 'LogTask'
+      BlobType = ftWideMemo
+    end
+    object dbSettingNextStart: TDateTimeField
+      FieldName = 'NextStart'
+    end
+    object dbSettingLastStart: TWideStringField
+      FieldName = 'LastStart'
+      Size = 255
+    end
+    object dbSettingNamtTaskV: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'NamtTaskV'
+      Calculated = True
+    end
+    object dbSettingOnTaskV: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'OnTaskV'
+      Calculated = True
+    end
+    object dbSettingNextStartStr: TWideStringField
+      FieldName = 'NextStartStr'
+      Size = 255
+    end
+    object dbSettingKeyStr: TAutoIncField
+      FieldName = 'KeyStr'
+      ReadOnly = True
+    end
+    object dbSettingID: TWideStringField
+      FieldName = 'ID'
+      Size = 255
+    end
+  end
+  object dbStack: TADOTable
+    Active = True
+    Connection = ADOConn
+    CursorType = ctStatic
+    TableName = 'Stack'
+    Left = 248
+    Top = 232
+    object dbStackKeyStr: TAutoIncField
+      FieldName = 'KeyStr'
+      ReadOnly = True
+    end
+    object dbStackID: TWideStringField
+      FieldName = 'ID'
+      Size = 255
+    end
+    object dbStackNameTask: TWideStringField
+      FieldName = 'NameTask'
+      Size = 255
+    end
+    object dbStackStartTime: TDateTimeField
+      FieldName = 'StartTime'
+    end
+    object dbStackonExec: TWideStringField
+      FieldName = 'onExec'
+      Size = 255
+    end
   end
 end
