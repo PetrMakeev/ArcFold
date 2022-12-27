@@ -4409,7 +4409,7 @@ object frmMain: TfrmMain
     Top = 0
     Width = 667
     Height = 177
-    ActivePage = tabStack
+    ActivePage = tabTask
     Align = alTop
     TabOrder = 0
     ExplicitWidth = 663
@@ -4523,6 +4523,15 @@ object frmMain: TfrmMain
     TabOrder = 1
     ExplicitTop = 199
     ExplicitWidth = 663
+  end
+  object Button1: TButton
+    Left = 424
+    Top = 169
+    Width = 75
+    Height = 25
+    Caption = 'Button1'
+    TabOrder = 2
+    OnClick = Button1Click
   end
   object MainMenu1: TMainMenu
     Left = 56
@@ -9097,7 +9106,8 @@ object frmMain: TfrmMain
     Top = 224
   end
   object TimerTask: TTimer
-    Interval = 15000
+    Interval = 10000
+    OnTimer = TimerTaskTimer
     Left = 476
     Top = 104
   end

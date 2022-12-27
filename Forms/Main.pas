@@ -60,6 +60,7 @@ type
     dbSettingLastStartV: TStringField;
     dbSettingNextStartStr: TStringField;
     TimerTask: TTimer;
+    Button1: TButton;
     procedure popRestoreClick(Sender: TObject);
     procedure AppEventsMinimize(Sender: TObject);
     procedure popTaskPopup(Sender: TObject);
@@ -101,6 +102,8 @@ type
     procedure popOffClick(Sender: TObject);
     procedure popEditClick(Sender: TObject);
     procedure dbSettingCalcFields(DataSet: TDataSet);
+    procedure Button1Click(Sender: TObject);
+    procedure TimerTaskTimer(Sender: TObject);
   private
     { Private declarations }
   public
@@ -166,10 +169,20 @@ begin
   GetWindowLong(Application.Handle, GWL_EXSTYLE) or (not WS_EX_APPWINDOW));
 end;
 
+
+
+procedure TfrmMain.Button1Click(Sender: TObject);
+begin
+  taskToStack(dbSettingID.AsString, dbSettingNameTask.AsString, dbSettingNextStart.AsDateTime);
+end;
+
+
+
+
 procedure TfrmMain.dbSettingCalcFields(DataSet: TDataSet);
 begin
   // готовим вычисляемые поля
-  dbSettingOnTaskv.AsString := ifthen(dbSettingOnTask.AsInteger=1, '+', ' ')  ;
+  dbSettingOnTaskv.AsString := ifthen(dbSettingOnTask.AsInteger = 1, '+', ' ')  ;
 
 end;
 
@@ -295,33 +308,62 @@ end;
 
 procedure TfrmMain.TaskToStack(ID:string; NameTask:string; StartTime:TDatetime);
 var
-  currDT:TDatetime;
-  currRecNo:integer;
+  flFind: boolean;
 begin
   //проверяем наличие в стеке задач
+  flFind := false;
   dbStack.First;
-  if dbStack.Eof then
+  if not dbStack.Eof then
+  begin
+    // проверяем на повторый запуск
+    while not dbStack.Eof do
+    begin
+      if Trim(dbStackID.AsString) = Trim(ID) then
+      begin
+        //задача уже есть в стеке
+        memLog.Lines.Add('в стеке есть задача -' + NameTask + ' - ' + DateTimeToStr(StartTime));
+        flFind := True;
+        exit;
+      end;
+      dbStack.Next;
+    end;
+
+  end;
+
+  if not flFind then
   begin
     //стек пуст запускаем задачу
     memLog.Lines.Add('добавляем задачу -' + NameTask + ' - ' + DateTimeToStr(StartTime));
     dbStack.Append;
-    dbStack.FieldByName('TipTask').AsString := ID; //!!!!
+    dbStack.FieldByName('ID').AsString := ID; //!!!!
     dbStack.FieldByName('NameTask').AsString := NameTask; //!!!!
     dbStack.FieldByName('StartTime').AsDateTime := StartTime; //!!!!
     dbStack.FieldByName('OnExec').AsInteger := 1; //!!!!
     dbStack.Post;
-
   end;
 
 
+end;
+
+procedure TfrmMain.TimerTaskTimer(Sender: TObject);
+var
+  recNo:integer;
+begin
+  //сохраняем позицию и сканируем задачи на время
+  dbSetting.First;
+  if not dbSetting.Eof then
+  begin
+    if (incSecond(Now(), -15) < dbStackStartTime.AsDateTime) and (dbStackStartTime.AsDateTime < IncSecond(Now(), 15)) then
+       taskToStack(dbSettingID.AsString, dbSettingNameTask.AsString, dbSettingNextStart.AsDateTime);
+  end;
 
 end;
 
 function TfrmMain.FindNextStart(TipTask: integer; TimeTask: TDateTime; SelDay,
   SelMonth: string; DayMonthTask: word): TDateTime;
 var
-  tmpYear, tmpMonth, tmpDay, tmpHour, tmpMinute, tmpSecond, tmpMSec: Word;
-  tmpDateTime, DateTimeStart, currDateTime, findDateTime:TDateTime;
+  tmpHour, tmpMinute, tmpSecond, tmpMSec: Word;
+  tmpDateTime, DateTimeStart, currDateTime:TDateTime;
   currYear, currMonth, currDay, currHour, currMinute, currSecond, currMSec: Word;
   currDayWeek, currMonthYear: word;
   I: Word;
@@ -333,6 +375,7 @@ begin
   //фиксируем текущие дату и время
   DecodeDateTime(Now(), currYear, currMonth, currDay, currHour, currMinute, currSecond, currMSec);
   currDateTime := EncodeDateTime(currYear, currMonth, currDay, currHour, currMinute, 0, 0);
+  DateTimeStart := EncodeDateTime(currYear, currMonth, currDay, currHour, currMinute, currSecond, currMSec);
 
   //ежедневно
   if TipTask=0 then
