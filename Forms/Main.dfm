@@ -4410,7 +4410,7 @@ object frmMain: TfrmMain
     Top = 0
     Width = 667
     Height = 177
-    ActivePage = tabTask
+    ActivePage = tabStack
     Align = alTop
     TabOrder = 0
     ExplicitWidth = 663
@@ -4493,7 +4493,7 @@ object frmMain: TfrmMain
             FieldName = 'onExec'
             Title.Alignment = taCenter
             Title.Caption = #1057#1090#1072#1090#1091#1089
-            Width = 75
+            Width = 121
             Visible = True
           end
           item
@@ -4509,7 +4509,7 @@ object frmMain: TfrmMain
             FieldName = 'NameTask'
             Title.Alignment = taCenter
             Title.Caption = #1053#1072#1079#1074#1072#1085#1080#1077' '#1079#1072#1076#1072#1095#1080
-            Width = 287
+            Width = 386
             Visible = True
           end>
       end
@@ -8942,8 +8942,8 @@ object frmMain: TfrmMain
   end
   object dsSetting: TDataSource
     DataSet = dbSetting
-    Left = 176
-    Top = 232
+    Left = 104
+    Top = 288
   end
   object popTask: TPopupMenu
     OnPopup = popTaskPopup
@@ -8975,20 +8975,20 @@ object frmMain: TfrmMain
   end
   object dsStack: TDataSource
     DataSet = dbStack
-    Left = 312
-    Top = 232
+    Left = 176
+    Top = 288
   end
   object TimerTask: TTimer
-    Enabled = False
     Interval = 10000
     OnTimer = TimerTaskTimer
     Left = 476
     Top = 104
   end
   object ADOConn: TADOConnection
+    Connected = True
     ConnectionString = 
-      'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=arcFold.mdb;Persist' +
-      ' Security Info=False;'
+      'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\Projects\ArcFold' +
+      '\arcFold.mdb;Persist Security Info=False'
     LoginPrompt = False
     Mode = cmShareDenyNone
     Provider = 'Microsoft.Jet.OLEDB.4.0'
@@ -9093,7 +9093,7 @@ object frmMain: TfrmMain
     Connection = ADOConn
     CursorType = ctStatic
     TableName = 'Stack'
-    Left = 248
+    Left = 176
     Top = 232
     object dbStackKeyStr: TAutoIncField
       FieldName = 'KeyStr'
@@ -9117,8 +9117,60 @@ object frmMain: TfrmMain
   end
   object dbFindTask: TADOQuery
     Connection = ADOConn
+    CursorType = ctStatic
     Parameters = <>
-    Left = 392
+    SQL.Strings = (
+      'SELECT Task.ID, Task.NameTask, Task.NextStart'
+      'FROM Task '
+      'WHERE ( DateAdd('#39's'#39', -5, Now()) <= Task.NextStart ) and '
+      '             ( Task.NextStart <= DateAdd('#39's'#39', 15, Now() ) )')
+    Left = 240
     Top = 232
+    object dbFindTaskID: TWideStringField
+      FieldName = 'ID'
+      Size = 255
+    end
+    object dbFindTaskNameTask: TWideStringField
+      FieldName = 'NameTask'
+      Size = 200
+    end
+    object dbFindTaskNextStart: TDateTimeField
+      FieldName = 'NextStart'
+    end
+  end
+  object clearStack: TADOCommand
+    CommandText = 'delete from stack where 1=1'
+    Connection = ADOConn
+    Parameters = <>
+    Left = 320
+    Top = 288
+  end
+  object existStack: TADOQuery
+    Connection = ADOConn
+    CursorType = ctStatic
+    Parameters = <>
+    SQL.Strings = (
+      'select * from stack')
+    Left = 320
+    Top = 232
+    object existStackKeyStr: TAutoIncField
+      FieldName = 'KeyStr'
+      ReadOnly = True
+    end
+    object existStackID: TWideStringField
+      FieldName = 'ID'
+      Size = 255
+    end
+    object existStackNameTask: TWideStringField
+      FieldName = 'NameTask'
+      Size = 255
+    end
+    object existStackStartTime: TDateTimeField
+      FieldName = 'StartTime'
+    end
+    object existStackonExec: TWideStringField
+      FieldName = 'onExec'
+      Size = 255
+    end
   end
 end

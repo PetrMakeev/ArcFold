@@ -65,6 +65,16 @@ type
     dbStackStartTime: TDateTimeField;
     dbStackonExec: TWideStringField;
     dbFindTask: TADOQuery;
+    dbFindTaskID: TWideStringField;
+    dbFindTaskNameTask: TWideStringField;
+    dbFindTaskNextStart: TDateTimeField;
+    clearStack: TADOCommand;
+    existStack: TADOQuery;
+    existStackKeyStr: TAutoIncField;
+    existStackID: TWideStringField;
+    existStackNameTask: TWideStringField;
+    existStackStartTime: TDateTimeField;
+    existStackonExec: TWideStringField;
     procedure popRestoreClick(Sender: TObject);
     procedure AppEventsMinimize(Sender: TObject);
     procedure popTaskPopup(Sender: TObject);
@@ -97,6 +107,8 @@ type
                        SelMonth:string;
                        modeEdit:integer);
 
+    function ExistRecStack():boolean;
+
     procedure TaskToStack(ID:string;
                           NameTask:string;
                           StartTime:TDatetime);
@@ -124,6 +136,8 @@ uses
   SetTask;
 
 {$R *.dfm}
+
+
 
 procedure TfrmMain.ADDSetting();
 begin
@@ -178,7 +192,8 @@ end;
 
 procedure TfrmMain.Button1Click(Sender: TObject);
 begin
-  taskToStack(dbSettingID.AsString, dbSettingNameTask.AsString, dbSettingNextStart.AsDateTime);
+// выполняем
+
 end;
 
 
@@ -188,6 +203,19 @@ procedure TfrmMain.dbSettingCalcFields(DataSet: TDataSet);
 begin
   // готовим вычисляемые поля
   dbSettingOnTaskv.AsString := ifthen(dbSettingOnTask.AsInteger = 1, '+', ' ')  ;
+
+end;
+
+
+function TfrmMain.ExistRecStack():boolean;
+begin
+   //проверяем наличие задач в стеке
+   if existStack.Active then existStack.Close;
+   existStack.Open;
+   if existStack.RecordCount>0 then
+     Result := true
+   else
+     Result := false;
 
 end;
 
@@ -315,37 +343,37 @@ procedure TfrmMain.TaskToStack(ID:string; NameTask:string; StartTime:TDatetime);
 var
   flFind: boolean;
 begin
+  flFind := ExistRecStack();
   //проверяем наличие в стеке задач
-  flFind := false;
-  dbStack.First;
-  if not dbStack.Eof then
+  if flFind then
   begin
-    // проверяем на повторый запуск
-    while not dbStack.Eof do
+    // проверяем на повторый запуск                                                         !!!!!!!!!!!!!!!!!!
+    ExistStack.First;
+    while not ExistStack.Eof do
     begin
-      if Trim(dbStackID.AsString) = Trim(ID) then
+      if Trim(ExistStackID.AsString) = Trim(ID) then
       begin
         //задача уже есть в стеке
         memLog.Lines.Add('в стеке есть задача -' + NameTask + ' - ' + DateTimeToStr(StartTime));
-        flFind := True;
         exit;
       end;
-      dbStack.Next;
+      ExistStack.Next;
     end;
 
   end;
 
+  memLog.Lines.Add('добавляем задачу -' + NameTask + ' - ' + DateTimeToStr(StartTime));
+  dbStack.Append;
+  dbStack.FieldByName('ID').AsString := ID;
+  dbStack.FieldByName('NameTask').AsString := NameTask;
+  dbStack.FieldByName('StartTime').AsDateTime := StartTime;
   if not flFind then
-  begin
     //стек пуст запускаем задачу
-    memLog.Lines.Add('добавляем задачу -' + NameTask + ' - ' + DateTimeToStr(StartTime));
-    dbStack.Append;
-    dbStack.FieldByName('ID').AsString := ID; //!!!!
-    dbStack.FieldByName('NameTask').AsString := NameTask; //!!!!
-    dbStack.FieldByName('StartTime').AsDateTime := StartTime; //!!!!
-    dbStack.FieldByName('OnExec').AsInteger := 1; //!!!!
-    dbStack.Post;
-  end;
+    dbStack.FieldByName('OnExec').AsString := 'Выполняется'
+  else
+    //стек уже с очередью
+    dbStack.FieldByName('OnExec').AsString := 'В очереди...';
+  dbStack.Post;
 
 
 end;
@@ -354,12 +382,16 @@ procedure TfrmMain.TimerTaskTimer(Sender: TObject);
 var
   recNo:integer;
 begin
-  //сохраняем позицию и сканируем задачи на время
-  dbSetting.First;
-  if not dbSetting.Eof then
+  //перебираем задачи попадающие в запрос для стека
+  dbFindTask.Requery();
+  if dbFindTask.RecordCount=0 then exit;
+
+  dbFindTask.First;
+  while not dbFindTask.Eof do
   begin
-    if (incSecond(Now(), -15) < dbStackStartTime.AsDateTime) and (dbStackStartTime.AsDateTime < IncSecond(Now(), 15)) then
-       taskToStack(dbSettingID.AsString, dbSettingNameTask.AsString, dbSettingNextStart.AsDateTime);
+    //добавляем в стек задачу
+    taskToStack(dbFindTaskID.AsString, dbFindTaskNameTask.AsString, dbFindTaskNextStart.AsDateTime);
+    dbFindTask.Next;
   end;
 
 end;
@@ -472,10 +504,14 @@ var
   pathExe:string;
 begin
   pathExe := ExtractFilePath(Application.ExeName);
+  if AdoConn.Connected then AdoConn.Close;
+
   AdoConn.ConnectionString := 'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=' + pathExe + 'arcFold.mdb;Persist Security Info=False;';
   AdoConn.Connected := true;
   if not dbSetting.Active then dbSetting.Active := true;
+  clearStack.Execute ;
   if not dbStack.Active then dbStack.Active := true;
+  if not dbFindTask.Active then dbFindTask.Active := true;
 end;
 
 end.
