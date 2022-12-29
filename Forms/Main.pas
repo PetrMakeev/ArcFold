@@ -75,6 +75,11 @@ type
     existStackNameTask: TWideStringField;
     existStackStartTime: TDateTimeField;
     existStackonExec: TWideStringField;
+    dbFindStack: TADOQuery;
+    dbFindStackID: TWideStringField;
+    dbFindStackNameTask: TWideStringField;
+    dbFindStackStartTime: TDateTimeField;
+    dbFindStackonExec: TWideStringField;
     procedure popRestoreClick(Sender: TObject);
     procedure AppEventsMinimize(Sender: TObject);
     procedure popTaskPopup(Sender: TObject);
@@ -354,7 +359,7 @@ begin
       if Trim(ExistStackID.AsString) = Trim(ID) then
       begin
         //задача уже есть в стеке
-        memLog.Lines.Add('в стеке есть задача -' + NameTask + ' - ' + DateTimeToStr(StartTime));
+        //memLog.Lines.Add('в стеке есть задача -' + NameTask + ' - ' + DateTimeToStr(StartTime));
         exit;
       end;
       ExistStack.Next;
@@ -509,9 +514,10 @@ begin
   AdoConn.ConnectionString := 'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=' + pathExe + 'arcFold.mdb;Persist Security Info=False;';
   AdoConn.Connected := true;
   if not dbSetting.Active then dbSetting.Active := true;
-  clearStack.Execute ;
+  ///clearStack.Execute ;  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!¬ключить после отладки стека
   if not dbStack.Active then dbStack.Active := true;
   if not dbFindTask.Active then dbFindTask.Active := true;
+  if not dbFindStack.Active then dbFindStack.Active := true;
 end;
 
 end.

@@ -9173,4 +9173,30 @@ object frmMain: TfrmMain
       Size = 255
     end
   end
+  object dbFindStack: TADOQuery
+    Connection = ADOConn
+    CursorType = ctStatic
+    Parameters = <>
+    SQL.Strings = (
+      'SELECT Stack.ID, Stack.NameTask, Stack.StartTime, Stack.onExec'
+      'FROM Stack '
+      'ORDER BY Stack.StartTime')
+    Left = 408
+    Top = 232
+    object dbFindStackID: TWideStringField
+      FieldName = 'ID'
+      Size = 255
+    end
+    object dbFindStackNameTask: TWideStringField
+      FieldName = 'NameTask'
+      Size = 255
+    end
+    object dbFindStackStartTime: TDateTimeField
+      FieldName = 'StartTime'
+    end
+    object dbFindStackonExec: TWideStringField
+      FieldName = 'onExec'
+      Size = 255
+    end
+  end
 end
