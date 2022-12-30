@@ -9098,7 +9098,9 @@ object frmMain: TfrmMain
       'SELECT Task.ID, Task.NameTask, Task.NextStart'
       'FROM Task'
       'WHERE ( DateAdd('#39's'#39', -5, Now()) <= Task.NextStart ) and'
-      '             ( Task.NextStart <= DateAdd('#39'd'#39', 15, Now() ) )')
+      
+        '             ( Task.NextStart <= DateAdd('#39'd'#39', 15, Now() ) ) and ' +
+        'Task.onTask=1')
     Left = 168
     Top = 232
     object dbFindTaskID: TWideStringField
@@ -9400,7 +9402,29 @@ object frmMain: TfrmMain
         Size = 510
         Value = Null
       end>
-    Left = 560
-    Top = 288
+    Left = 624
+    Top = 216
+  end
+  object TimerStack: TTimer
+    Interval = 10000
+    OnTimer = TimerStackTimer
+    Left = 548
+    Top = 104
+  end
+  object setExecTask: TADOCommand
+    CommandText = 'update stack '#13#10'set onExec='#39#1042#1099#1087#1086#1083#1085#1103#1077#1090#1089#1103#39#13#10'where ID=:ID'
+    Connection = ADOConn
+    Parameters = <
+      item
+        Name = 'ID'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end>
+    Left = 568
+    Top = 232
   end
 end

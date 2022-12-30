@@ -111,6 +111,8 @@ type
     dbStackonExec: TWideStringField;
     addExecTask: TADOCommand;
     qadd: TADOCommand;
+    TimerStack: TTimer;
+    setExecTask: TADOCommand;
     procedure popRestoreClick(Sender: TObject);
     procedure AppEventsMinimize(Sender: TObject);
     procedure popTaskPopup(Sender: TObject);
@@ -155,6 +157,7 @@ type
     procedure Button1Click(Sender: TObject);
     procedure TimerTaskTimer(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure TimerStackTimer(Sender: TObject);
 
 
   private
@@ -412,6 +415,28 @@ end;
 
 
 // обрабатываем таймер задачи, ищем задачи на выполнение и отправл€ем в стек
+procedure TfrmMain.TimerStackTimer(Sender: TObject);
+begin
+  //перебираем задачи в стеке
+  dbFindStack.Requery();
+  if dbFindStack.RecordCount=0 then exit;
+  dbFindStack.First;
+  if dbFindStackOnExec.AsString='¬ очереди...' then
+  begin
+    setExecTask.Prepared;
+    setExecTask.Parameters.ParamByName('ID').Value := dbFindStackID.AsString;
+    setExecTask.Execute;
+    dbStack.Requery() ;
+    DBGrid1.Refresh;
+
+    StartTask(dbFindStackID.AsString);
+
+  end;
+
+
+
+end;
+
 procedure TfrmMain.TimerTaskTimer(Sender: TObject);
 var
   recNo:integer;
