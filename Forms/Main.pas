@@ -110,6 +110,7 @@ type
     dbStackStartTime: TDateTimeField;
     dbStackonExec: TWideStringField;
     addExecTask: TADOCommand;
+    qadd: TADOCommand;
     procedure popRestoreClick(Sender: TObject);
     procedure AppEventsMinimize(Sender: TObject);
     procedure popTaskPopup(Sender: TObject);
@@ -145,9 +146,6 @@ type
 
     function ExistRecStack():boolean;
 
-    procedure TaskToStack(ID:string;
-                          NameTask:string;
-                          StartTime:TDatetime);
 
     procedure popDelClick(Sender: TObject);
     procedure popOnClick(Sender: TObject);
@@ -242,7 +240,8 @@ end;
 procedure TfrmMain.Button1Click(Sender: TObject);
 begin
 // выполняем
-    TaskToStack(dbSettingID.AsString, dbSettingNameTask.AsString, dbSettingNextStart.AsDateTime);
+
+  TimerTaskTimer(Self);
 end;
 
 
@@ -252,7 +251,6 @@ procedure TfrmMain.dbSettingCalcFields(DataSet: TDataSet);
 begin
   // готовим вычисляемые поля
   dbSettingOnTaskv.AsString := ifthen(dbSettingOnTask.AsInteger = 1, '+', ' ')  ;
-
 end;
 
 
@@ -399,82 +397,27 @@ begin
   qStartTask.Parameters.ParamByName('ID').Value := ID;
   qStartTask.Open;
 
-  //Запускаем архивирование в отдельном потоке
-  execIDTask := ID;
-  //oneMoreThread := TOneMoreThread.Create(false); // << false означает авто запуск потока
-  //oneMoreThread.FreeOnTerminate := true; // << Уничтожение после выполнения
-
   memLog.Lines.Add('start');
 
-  sleep(1000) ;
+  //Запускаем архивирование в отдельном потоке
+  execIDTask := ID;
+  oneMoreThread := TOneMoreThread.Create(false); // << false означает авто запуск потока
+  oneMoreThread.FreeOnTerminate := true; // << Уничтожение после выполнения
+  //oneMoreThread.Resume;
 
-  memLog.Lines.Add('end');
-
-  //после выполнения архивирования удаляем из стека задачу
-  delExecTask.Parameters.ParamByName('ID').Value := ID;
-  delExecTask.Execute;
-  dbStack.Requery();
 
 
 end;
 
-// перед добавлением в стек проверяем задачу на дублирование
-// если задач в стеке небыло вызываем запуск задачи
-procedure TfrmMain.TaskToStack(ID:string; NameTask:string; StartTime:TDatetime);
-var
-  flFind: boolean;
-  statusStr:string;
-begin
-  flFind := ExistRecStack();
-  //проверяем наличие в стеке задач
-  if flFind then
-  begin
-    // проверяем на повторый запуск                     !!!!!!!!!!!!!!!!!!
-    ExistStack.First;
-    while not ExistStack.Eof do
-    begin
-      if Trim(ExistStackID.AsString) = Trim(ID) then
-      begin
-        //задача уже есть в стеке
-        exit;
-      end;
-      ExistStack.Next;
-    end;
-
-  end;
-
-  memLog.Lines.Add('добавляем задачу -' + NameTask + ' - ' + DateTimeToStr(StartTime));
-
-
-  if not flFind then
-    //стек пуст запускаем задачу
-    statusStr := 'Выполняется'
-  else
-    statusStr := 'В очереди...';
-
-  addExecTask.Prepared;
-  addExecTask.Parameters.ParamByName('ID').Value := ID;
-
-  addExecTask.Parameters.ParamByName('NameTask').Value := NameTask;
-
-  addExecTask.Parameters.ParamByName('StartTime').Value := StartTime;
-
-  addExecTask.Parameters.ParamByName('onExec').Value := statusStr ;
-
-  addExecTask.Execute;
-  dbStack.Requery() ;
-
-  // запускаем задачу если стек был пуст
-  if not flFind then
-    StartTask(ID);
-
-end;
 
 
 // обрабатываем таймер задачи, ищем задачи на выполнение и отправляем в стек
 procedure TfrmMain.TimerTaskTimer(Sender: TObject);
 var
   recNo:integer;
+  flFind: boolean;
+  statusStr:string;
+
 begin
   //перебираем задачи попадающие в запрос для стека
   dbFindTask.Requery();
@@ -484,7 +427,51 @@ begin
   while not dbFindTask.Eof do
   begin
     //добавляем в стек задачу
-    taskToStack(dbFindTaskID.AsString, dbFindTaskNameTask.AsString, dbFindTaskNextStart.AsDateTime);
+
+    flFind := ExistRecStack();
+    //проверяем наличие в стеке задач
+    if flFind then
+    begin
+      // проверяем на повторый запуск                     !!!!!!!!!!!!!!!!!!
+      ExistStack.First;
+      while not ExistStack.Eof do
+      begin
+        if Trim(ExistStackID.AsString) = Trim(dbFindTaskID.AsString) then
+        begin
+          //задача уже есть в стеке
+          exit;
+        end;
+        ExistStack.Next;
+      end;
+
+    end;
+
+    memLog.Lines.Add('добавляем задачу -' + dbFindTaskNameTask.AsString + ' - ' + DateTimeToStr(dbFindTaskNextStart.AsDateTime));
+
+
+    if not flFind then
+      //стек пуст запускаем задачу
+      statusStr := 'Выполняется'
+    else
+      statusStr := 'В очереди...';
+
+    addExecTask.Prepared;
+    addExecTask.Parameters.ParamByName('ID').Value := dbFindTaskID.AsString;
+
+    addExecTask.Parameters.ParamByName('NameTask').Value := dbFindTaskNameTask.AsString;
+
+    addExecTask.Parameters.ParamByName('StartTime').Value := dbFindTaskNextStart.AsDateTime;
+
+    addExecTask.Parameters.ParamByName('onExec').Value := statusStr ;
+
+    addExecTask.Execute;
+    dbStack.Requery() ;
+    DBGrid1.Refresh;
+
+    // запускаем задачу если стек был пуст
+    if not flFind then
+      StartTask(dbFindTaskID.AsString);
+
     dbFindTask.Next;
   end;
 
@@ -626,6 +613,13 @@ begin
 
     //архивируем в отдельном потоке
 
+  frmMain.qStartTask.First;
+  PrefixName := frmMain.qStartTaskPrefixName.AsString + ReplaceStr(DateTimeToStr(Now()), ':', '.');
+  FromZip := frmMain.qStartTaskFromZip.AsString;
+  ToZip := frmMain.qStartTaskToZip.AsString;
+  CryptWord := frmMain.qStartTaskCryptWord.AsString;
+  CryptZip := frmMain.qStartTaskCryptZip.AsInteger;
+  CompressZip:= frmMain.qStartTaskCompressZip.AsInteger  ;
 
   Arch := CreateOutArchive(CLSID_CFormat7Z);
 
@@ -643,7 +637,15 @@ begin
     Arch.SetPassword('');
 
   // Save to file
-  Arch.SaveToFile(ToZip);
+  Arch.SaveToFile(ToZip+'\'+PrefixName+'.zip');
+
+  //после выполнения архивирования удаляем из стека задачу
+  frmMain.delExecTask.Parameters.ParamByName('ID').Value := frmMain.execIDTask;
+  frmMain.delExecTask.Execute;
+  frmMain.dbStack.Requery();
+
+  frmMain.memLog.Lines.Add('end');
+
 
 end;
 

@@ -4410,7 +4410,7 @@ object frmMain: TfrmMain
     Top = 0
     Width = 667
     Height = 177
-    ActivePage = tabStack
+    ActivePage = tabTask
     Align = alTop
     TabOrder = 0
     ExplicitWidth = 663
@@ -8974,10 +8974,12 @@ object frmMain: TfrmMain
     end
   end
   object dsStack: TDataSource
+    DataSet = dbStack
     Left = 248
     Top = 288
   end
   object TimerTask: TTimer
+    Enabled = False
     Interval = 10000
     OnTimer = TimerTaskTimer
     Left = 476
@@ -9094,9 +9096,9 @@ object frmMain: TfrmMain
     Parameters = <>
     SQL.Strings = (
       'SELECT Task.ID, Task.NameTask, Task.NextStart'
-      'FROM Task '
-      'WHERE ( DateAdd('#39's'#39', -5, Now()) <= Task.NextStart ) and '
-      '             ( Task.NextStart <= DateAdd('#39's'#39', 15, Now() ) )')
+      'FROM Task'
+      'WHERE ( DateAdd('#39's'#39', -5, Now()) <= Task.NextStart ) and'
+      '             ( Task.NextStart <= DateAdd('#39'd'#39', 15, Now() ) )')
     Left = 168
     Top = 232
     object dbFindTaskID: TWideStringField
@@ -9355,5 +9357,50 @@ object frmMain: TfrmMain
       end>
     Left = 496
     Top = 232
+  end
+  object qadd: TADOCommand
+    CommandText = 
+      'insert into Stack (ID, NameTask, onExec, StartTime) Values (:ID,' +
+      ' :NameTask, :onExec, :StartTime)'
+    Connection = ADOConn
+    Parameters = <
+      item
+        Name = 'ID'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'NameTask'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'onExec'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'StartTime'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end>
+    Left = 560
+    Top = 288
   end
 end

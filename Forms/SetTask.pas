@@ -137,6 +137,7 @@ end;
 procedure TfrmSetTask.btnSaveClick(Sender: TObject);
 var
   SelDay, SelMonth:string;
+  SelCompress:integer;
 begin
   //проверяем заполнение данных
   if trim(txtNameTask.Text)='' then
@@ -200,19 +201,27 @@ begin
     exit;
   end;
 
+  //компрессия
+  case cmbCompressZip.ItemIndex of
+    0 : SelCompress:=0;
+    1 : SelCompress:=1;
+    2 : SelCompress:=3;
+    3 : SelCompress:=5;
+    4 : SelCompress:=7;
+    5 : SelCompress:=9;
+    else  SelCompress:=5
+  end;
 
   // вызываем добавление
   frmMain.SaveSetting(txtNameTask.Text,
                       txtFromZip.Text,
                       txtToZip.Text,
                       txtPrefixName.Text,
-
                       cmbFormatZip.ItemIndex,
-                      cmbCompressZip.ItemIndex,
+                      SelCompress,
                       ifthen(chbCryptZip.Checked, 1, 0),
                       txtCryptWord1.Text,
                       ifthen(chbCryptFileName.Checked, 1, 0),
-
                       cmbTipTask.ItemIndex,
                       txtTimeTask.Time,
                       txtDayMonthTask.ValueInt,
@@ -308,7 +317,7 @@ begin
     txtDayMonthTask.ValueInt := 1;
 
     cmbFormatZip.ItemIndex := 0;
-    cmbCompressZip.ItemIndex := 2;
+    cmbCompressZip.ItemIndex := 3;
     chbCryptZip.Checked := False;
     chbCryptFileName.Checked := False;
     txtCryptWord1.Text := '';
@@ -363,7 +372,18 @@ begin
   txtDayMonthTask.ValueInt := DayMonthTask;
 
   cmbFormatZip.ItemIndex := FormatZip;
-  cmbCompressZip.ItemIndex := CompressZip;
+
+  case cmbCompressZip.ItemIndex of
+    0 : CompressZip := 0;
+    1 : CompressZip := 1;
+    3 : CompressZip := 2;
+    5 : CompressZip := 3;
+    7 : CompressZip := 4;
+    9 : CompressZip := 5;
+  else CompressZip := 3;
+  end;
+
+
   chbCryptZip.Checked := 1 = CryptZip;
   chbCryptFileName.Checked := 1 = CryptFileName;
   txtCryptWord1.Text := CryptWord;
