@@ -8974,8 +8974,7 @@ object frmMain: TfrmMain
     end
   end
   object dsStack: TDataSource
-    DataSet = dbStack
-    Left = 176
+    Left = 248
     Top = 288
   end
   object TimerTask: TTimer
@@ -9089,32 +9088,6 @@ object frmMain: TfrmMain
       Size = 255
     end
   end
-  object dbStack: TADOTable
-    Connection = ADOConn
-    CursorType = ctStatic
-    TableName = 'Stack'
-    Left = 176
-    Top = 232
-    object dbStackKeyStr: TAutoIncField
-      FieldName = 'KeyStr'
-      ReadOnly = True
-    end
-    object dbStackID: TWideStringField
-      FieldName = 'ID'
-      Size = 255
-    end
-    object dbStackNameTask: TWideStringField
-      FieldName = 'NameTask'
-      Size = 255
-    end
-    object dbStackStartTime: TDateTimeField
-      FieldName = 'StartTime'
-    end
-    object dbStackonExec: TWideStringField
-      FieldName = 'onExec'
-      Size = 255
-    end
-  end
   object dbFindTask: TADOQuery
     Connection = ADOConn
     CursorType = ctStatic
@@ -9124,7 +9097,7 @@ object frmMain: TfrmMain
       'FROM Task '
       'WHERE ( DateAdd('#39's'#39', -5, Now()) <= Task.NextStart ) and '
       '             ( Task.NextStart <= DateAdd('#39's'#39', 15, Now() ) )')
-    Left = 240
+    Left = 168
     Top = 232
     object dbFindTaskID: TWideStringField
       FieldName = 'ID'
@@ -9181,7 +9154,7 @@ object frmMain: TfrmMain
       'SELECT Stack.ID, Stack.NameTask, Stack.StartTime, Stack.onExec'
       'FROM Stack '
       'ORDER BY Stack.StartTime')
-    Left = 408
+    Left = 392
     Top = 232
     object dbFindStackID: TWideStringField
       FieldName = 'ID'
@@ -9198,5 +9171,189 @@ object frmMain: TfrmMain
       FieldName = 'onExec'
       Size = 255
     end
+  end
+  object qStartTask: TADOQuery
+    Connection = ADOConn
+    CursorType = ctStatic
+    Parameters = <
+      item
+        Name = 'ID'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end>
+    SQL.Strings = (
+      'SELECT *'
+      'FROM Task '
+      'WHERE ID=:ID')
+    Left = 168
+    Top = 288
+    object WideStringField1: TWideStringField
+      FieldName = 'ID'
+      Size = 255
+    end
+    object WideStringField2: TWideStringField
+      FieldName = 'NameTask'
+      Size = 200
+    end
+    object DateTimeField1: TDateTimeField
+      FieldName = 'NextStart'
+    end
+    object qStartTaskKeyStr: TAutoIncField
+      FieldName = 'KeyStr'
+      ReadOnly = True
+    end
+    object qStartTaskFromZip: TWideStringField
+      FieldName = 'FromZip'
+      Size = 255
+    end
+    object qStartTaskToZip: TWideStringField
+      FieldName = 'ToZip'
+      Size = 255
+    end
+    object qStartTaskPrefixName: TWideStringField
+      FieldName = 'PrefixName'
+      Size = 255
+    end
+    object qStartTaskFormatZip: TSmallintField
+      FieldName = 'FormatZip'
+    end
+    object qStartTaskCompressZip: TSmallintField
+      FieldName = 'CompressZip'
+    end
+    object qStartTaskCryptZip: TSmallintField
+      FieldName = 'CryptZip'
+    end
+    object qStartTaskCryptWord: TWideStringField
+      FieldName = 'CryptWord'
+      Size = 50
+    end
+    object qStartTaskCryptFileName: TSmallintField
+      FieldName = 'CryptFileName'
+    end
+    object qStartTaskTipTask: TSmallintField
+      FieldName = 'TipTask'
+    end
+    object qStartTaskTimeTask: TDateTimeField
+      FieldName = 'TimeTask'
+    end
+    object qStartTaskDayMonthTask: TSmallintField
+      FieldName = 'DayMonthTask'
+    end
+    object qStartTaskOnTask: TSmallintField
+      FieldName = 'OnTask'
+    end
+    object qStartTaskSelDay: TWideStringField
+      FieldName = 'SelDay'
+      Size = 7
+    end
+    object qStartTaskSelMonth: TWideStringField
+      FieldName = 'SelMonth'
+      Size = 12
+    end
+    object qStartTaskLogTask: TWideMemoField
+      FieldName = 'LogTask'
+      BlobType = ftWideMemo
+    end
+    object qStartTaskLastStart: TWideStringField
+      FieldName = 'LastStart'
+      Size = 255
+    end
+    object qStartTaskNextStartStr: TWideStringField
+      FieldName = 'NextStartStr'
+      Size = 255
+    end
+  end
+  object delExecTask: TADOCommand
+    CommandText = 'delete from stack where ID=:ID'
+    Connection = ADOConn
+    Parameters = <
+      item
+        Name = 'ID'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end>
+    Left = 496
+    Top = 288
+  end
+  object dbStack: TADOQuery
+    Connection = ADOConn
+    CursorType = ctStatic
+    Parameters = <>
+    SQL.Strings = (
+      'select * from stack')
+    Left = 248
+    Top = 232
+    object dbStackKeyStr: TAutoIncField
+      FieldName = 'KeyStr'
+      ReadOnly = True
+    end
+    object dbStackID: TWideStringField
+      FieldName = 'ID'
+      Size = 255
+    end
+    object dbStackNameTask: TWideStringField
+      FieldName = 'NameTask'
+      Size = 255
+    end
+    object dbStackStartTime: TDateTimeField
+      FieldName = 'StartTime'
+    end
+    object dbStackonExec: TWideStringField
+      FieldName = 'onExec'
+      Size = 255
+    end
+  end
+  object addExecTask: TADOCommand
+    CommandText = 
+      'insert into Stack (ID, NameTask, onExec, StartTime) Values (:ID,' +
+      ' :NameTask, :onExec, :StartTime)'
+    Connection = ADOConn
+    Parameters = <
+      item
+        Name = 'ID'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'NameTask'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'onExec'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'StartTime'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end>
+    Left = 496
+    Top = 232
   end
 end

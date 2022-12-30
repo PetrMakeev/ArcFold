@@ -3,7 +3,8 @@ program ArcFold;
 uses
   Forms,
   Main in 'Forms\Main.pas' {frmMain},
-  SetTask in 'Forms\SetTask.pas' {frmSetTask};
+  SetTask in 'Forms\SetTask.pas' {frmSetTask},
+  sevenzip in 'sevenzip.pas';
 
 {$R *.res}
 
