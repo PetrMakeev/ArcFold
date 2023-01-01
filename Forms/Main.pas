@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, Menus, ExtCtrls, StdCtrls, Vcl.AppEvnts, Data.DB, Vcl.Grids,
   Vcl.DBGrids, Datasnap.DBClient, Vcl.DBCtrls, System.StrUtils, Vcl.ComCtrls,
-  System.DateUtils, Data.Win.ADODB;
+  System.DateUtils, Data.Win.ADODB, System.ImageList, Vcl.ImgList;
 
 type
 
@@ -70,21 +70,24 @@ type
     dbFindTaskNextStart: TDateTimeField;
     clearStack: TADOCommand;
     existStack: TADOQuery;
-    existStackKeyStr: TAutoIncField;
-    existStackID: TWideStringField;
-    existStackNameTask: TWideStringField;
-    existStackStartTime: TDateTimeField;
-    existStackonExec: TWideStringField;
     dbFindStack: TADOQuery;
-    dbFindStackID: TWideStringField;
-    dbFindStackNameTask: TWideStringField;
-    dbFindStackStartTime: TDateTimeField;
-    dbFindStackonExec: TWideStringField;
     qStartTask: TADOQuery;
-    WideStringField1: TWideStringField;
-    WideStringField2: TWideStringField;
-    DateTimeField1: TDateTimeField;
+    delExecStack: TADOCommand;
+    dbStack: TADOQuery;
+    dbStackKeyStr: TAutoIncField;
+    dbStackID: TWideStringField;
+    dbStackNameTask: TWideStringField;
+    dbStackStartTime: TDateTimeField;
+    addExecTask: TADOCommand;
+    TimerStack: TTimer;
+    setExecStack: TADOCommand;
+    ImageList: TImageList;
+    Image1: TImage;
+    popStack: TPopupMenu;
+    popDelStack: TMenuItem;
     qStartTaskKeyStr: TAutoIncField;
+    qStartTaskID: TWideStringField;
+    qStartTaskNameTask: TWideStringField;
     qStartTaskFromZip: TWideStringField;
     qStartTaskToZip: TWideStringField;
     qStartTaskPrefixName: TWideStringField;
@@ -100,19 +103,22 @@ type
     qStartTaskSelDay: TWideStringField;
     qStartTaskSelMonth: TWideStringField;
     qStartTaskLogTask: TWideMemoField;
+    qStartTaskNextStart: TDateTimeField;
     qStartTaskLastStart: TWideStringField;
     qStartTaskNextStartStr: TWideStringField;
-    delExecTask: TADOCommand;
-    dbStack: TADOQuery;
-    dbStackKeyStr: TAutoIncField;
-    dbStackID: TWideStringField;
-    dbStackNameTask: TWideStringField;
-    dbStackStartTime: TDateTimeField;
-    dbStackonExec: TWideStringField;
-    addExecTask: TADOCommand;
-    qadd: TADOCommand;
-    TimerStack: TTimer;
-    setExecTask: TADOCommand;
+    setOnTask: TADOCommand;
+    dbStackonExec: TSmallintField;
+    dbStackOnExecV: TStringField;
+    existStackKeyStr: TAutoIncField;
+    existStackID: TWideStringField;
+    existStackNameTask: TWideStringField;
+    existStackStartTime: TDateTimeField;
+    existStackonExec: TSmallintField;
+    dbFindStackID: TWideStringField;
+    dbFindStackNameTask: TWideStringField;
+    dbFindStackStartTime: TDateTimeField;
+    dbFindStackonExec: TSmallintField;
+    setLastStartTask: TADOCommand;
     procedure popRestoreClick(Sender: TObject);
     procedure AppEventsMinimize(Sender: TObject);
     procedure popTaskPopup(Sender: TObject);
@@ -158,6 +164,8 @@ type
     procedure TimerTaskTimer(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure TimerStackTimer(Sender: TObject);
+    procedure popStackPopup(Sender: TObject);
+    procedure dbStackCalcFields(DataSet: TDataSet);
 
 
   private
@@ -168,6 +176,7 @@ type
   public
     { Public declarations }
     property execIDTask: string read FexecIDTask write SetexecIDTask;
+
 
   end;
 
@@ -192,13 +201,6 @@ end;
 procedure TfrmMain.ADDSetting();
 begin
   // добавл€ем данные
-  dbStack.Append;
-  dbStack.FieldByName('ID').AsString := DateTimeToStr(Now());
-  dbStack.FieldByName('NameTask').AsString := 'Ќазвание задачи';
-  dbStack.FieldByName('StartTime').AsDateTime := Now();
-  dbStack.FieldByName('OnExec').AsString := 'ќжидает';
-
-  dbStack.Post;
 
 end;
 
@@ -253,9 +255,17 @@ end;
 procedure TfrmMain.dbSettingCalcFields(DataSet: TDataSet);
 begin
   // готовим вычисл€емые пол€
-  dbSettingOnTaskv.AsString := ifthen(dbSettingOnTask.AsInteger = 1, '+', ' ')  ;
+  dbSettingOnTaskv.AsString := ifthen(dbSettingOnTask.AsInteger = 1, 'V', ' ')  ;
 end;
 
+
+procedure TfrmMain.dbStackCalcFields(DataSet: TDataSet);
+begin
+  if dbStackOnExec.AsInteger=0 then
+    dbStackOnExecV.AsString := '¬ыполн€етс€'
+  else
+    dbStackOnExecV.AsString := '¬ очереди...';
+end;
 
 function TfrmMain.ExistRecStack():boolean;
 begin
@@ -311,6 +321,23 @@ begin
   ShowWindow(Handle,SW_RESTORE);
   SetForegroundWindow(Handle);
   TrayIcon.Visible:=False;
+end;
+
+procedure TfrmMain.popStackPopup(Sender: TObject);
+begin
+  //настраиваем popTask
+  if (dbStack.Eof) then
+  begin
+    popDelStack.Enabled := false;
+   end
+  else
+  begin
+    if dbStackOnExec.AsInteger = 0 then
+      popDelStack.Enabled := false
+    else
+      popDelStack.Enabled := true;
+  end;
+
 end;
 
 procedure TfrmMain.popTaskPopup(Sender: TObject);
@@ -394,13 +421,40 @@ procedure TfrmMain.StartTask(ID:string);
 var
   oneMoreThread: TOneMoreThread;
 begin
+
   // «апуск задачи
   if qStartTask.Active then qStartTask.Close;
   qStartTask.Prepared;
   qStartTask.Parameters.ParamByName('ID').Value := ID;
   qStartTask.Open;
 
-  memLog.Lines.Add('start');
+  //провер€ем наличие пути
+  if not DirectoryExists(qStartTaskFromZip.AsString) then
+  begin
+    memLog.Lines.Add( qStartTaskNameTask.AsString + '- путь архивации не найден');
+    //выключаем задачу
+    setOnTask.Parameters.ParamByName('ID').Value := qStartTaskID.AsString;
+    setOnTask.Parameters.ParamByName('OnTask').Value := 0;
+    setOnTask.Execute;
+    dbSetting.Requery();
+    exit;
+  end;
+
+  //выключаем задачу
+  setLastStartTask.Parameters.ParamByName('ID').Value := qStartTaskID.AsString;
+  setLastStartTask.Parameters.ParamByName('LastStart').Value := DateTimeToStr(Now());
+  setLastStartTask.Execute;
+  dbSetting.Requery();
+
+
+  //логирование !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  memLog.Lines.Add(qStartTaskNameTask.asString + ' - start');
+
+
+  //указываем врем€ запуска
+
+
+
 
   //«апускаем архивирование в отдельном потоке
   execIDTask := ID;
@@ -421,12 +475,14 @@ begin
   dbFindStack.Requery();
   if dbFindStack.RecordCount=0 then exit;
   dbFindStack.First;
-  if dbFindStackOnExec.AsString='¬ очереди...' then
+  if dbFindStackOnExec.AsInteger=1 then
   begin
-    setExecTask.Prepared;
-    setExecTask.Parameters.ParamByName('ID').Value := dbFindStackID.AsString;
-    setExecTask.Execute;
+    setExecStack.Prepared;
+    setExecStack.Parameters.ParamByName('ID').Value := dbFindStackID.AsString;
+    setExecStack.Parameters.ParamByName('OnExec').Value := 0;
+    setExecStack.Execute;
     dbStack.Requery() ;
+
     DBGrid1.Refresh;
 
     StartTask(dbFindStackID.AsString);
@@ -441,7 +497,7 @@ procedure TfrmMain.TimerTaskTimer(Sender: TObject);
 var
   recNo:integer;
   flFind: boolean;
-  statusStr:string;
+  statusStr:integer;
 
 begin
   //перебираем задачи попадающие в запрос дл€ стека
@@ -476,9 +532,9 @@ begin
 
     if not flFind then
       //стек пуст запускаем задачу
-      statusStr := '¬ыполн€етс€'
+      statusStr := 0
     else
-      statusStr := '¬ очереди...';
+      statusStr := 1;
 
     addExecTask.Prepared;
     addExecTask.Parameters.ParamByName('ID').Value := dbFindTaskID.AsString;
@@ -618,10 +674,45 @@ begin
   AdoConn.ConnectionString := 'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=' + pathExe + 'arcFold.mdb;Persist Security Info=False;';
   AdoConn.Connected := true;
   if not dbSetting.Active then dbSetting.Active := true;
-  clearStack.Execute ;
+
   if not dbStack.Active then dbStack.Active := true;
   if not dbFindTask.Active then dbFindTask.Active := true;
   if not dbFindStack.Active then dbFindStack.Active := true;
+
+  //провер€ем задачи в стеке
+  if dbStack.RecordCount>0 then
+  begin
+    // есть незаконченные задани€
+    if dbStack.RecordCount>0 then
+      if MessageDlg('¬ очереди задач есть не запущенные в прошлом сеансе. ќчистить очерень задач?' ,mtWarning, [mbYes, mbNo], 0) = mrYes then
+      begin
+        //удал€ем
+        clearStack.Execute ;
+      end
+      else
+      begin
+        dbStack.First;
+        if dbStackOnExec.AsInteger=0 then
+        begin
+          //переводим все задани€ стека в ожидание
+          setExecStack.Parameters.ParamByName('ID').Value := dbStackID.AsString;
+          setExecStack.Parameters.ParamByName('OnExec').Value := 1;
+          setExecStack.Execute;
+        end;
+      end;
+
+
+    dbStack.Requery();
+    dbStack.First;
+
+
+  end;
+
+  //включаем тамеры
+  timerTask.Enabled := true;
+  timerStack.Enabled := true;
+
+
 end;
 
 
@@ -665,10 +756,11 @@ begin
   Arch.SaveToFile(ToZip+'\'+PrefixName+'.zip');
 
   //после выполнени€ архивировани€ удал€ем из стека задачу
-  frmMain.delExecTask.Parameters.ParamByName('ID').Value := frmMain.execIDTask;
-  frmMain.delExecTask.Execute;
+  frmMain.delExecStack.Parameters.ParamByName('ID').Value := frmMain.execIDTask;
+  frmMain.delExecStack.Execute;
   frmMain.dbStack.Requery();
 
+  //логирование
   frmMain.memLog.Lines.Add('end');
 
 

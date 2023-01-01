@@ -168,6 +168,15 @@ begin
     exit;
   end;
 
+  if not DirectoryExists(txtFromZip.Text) then
+  begin
+    showmessage('”казанный путь не найден');
+    btnFromZip.SetFocus;
+    exit;
+  end;
+
+
+
   if (cmbTipTask.ItemIndex = 1) and
       (not chbWeek1.Checked) and
       (not chbWeek2.Checked) and
