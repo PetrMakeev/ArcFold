@@ -4,7 +4,7 @@ object frmSetTask: TfrmSetTask
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = #1047#1072#1076#1072#1095#1072
-  ClientHeight = 495
+  ClientHeight = 518
   ClientWidth = 506
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -40,6 +40,13 @@ object frmSetTask: TfrmSetTask
     Width = 124
     Height = 15
     Caption = #1055#1088#1077#1092#1080#1082' '#1080#1084#1077#1085#1080' '#1072#1088#1093#1080#1074#1072
+  end
+  object Label7: TLabel
+    Left = 13
+    Top = 455
+    Width = 143
+    Height = 15
+    Caption = #1050#1086#1083#1080#1095#1077#1089#1090#1074#1086' '#1082#1086#1087#1080#1081' '#1072#1088#1093#1080#1074#1072
   end
   object txtNameTask: TEdit
     Left = 8
@@ -96,11 +103,11 @@ object frmSetTask: TfrmSetTask
     OnClick = btnToZipClick
   end
   object pgSet: TPageControl
-    Left = 8
+    Left = 9
     Top = 208
     Width = 489
-    Height = 249
-    ActivePage = tabCrypt
+    Height = 233
+    ActivePage = tabTime
     TabOrder = 6
     object tabTime: TTabSheet
       Caption = #1056#1072#1089#1087#1080#1089#1072#1085#1080#1077' '#1072#1088#1093#1080#1074#1072#1094#1080#1080
@@ -108,11 +115,10 @@ object frmSetTask: TfrmSetTask
         Left = 0
         Top = 0
         Width = 481
-        Height = 219
+        Height = 203
         Align = alClient
         Brush.Color = clBtnFace
-        ExplicitWidth = 369
-        ExplicitHeight = 78
+        ExplicitHeight = 201
       end
       object Label9: TLabel
         Left = 12
@@ -572,11 +578,10 @@ object frmSetTask: TfrmSetTask
         Left = 0
         Top = 0
         Width = 481
-        Height = 219
+        Height = 203
         Align = alClient
         Brush.Color = clBtnFace
-        ExplicitWidth = 369
-        ExplicitHeight = 78
+        ExplicitHeight = 185
       end
       object Label5: TLabel
         Left = 26
@@ -683,29 +688,44 @@ object frmSetTask: TfrmSetTask
   end
   object btnSave: TButton
     Left = 288
-    Top = 463
+    Top = 485
     Width = 97
     Height = 25
     Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
-    TabOrder = 7
+    TabOrder = 8
     OnClick = btnSaveClick
   end
   object btnCancel: TButton
     Left = 401
-    Top = 463
+    Top = 485
     Width = 97
     Height = 25
     Caption = #1054#1090#1084#1077#1085#1072
-    TabOrder = 8
+    TabOrder = 9
     OnClick = btnCancelClick
   end
   object chbOnTask: TCheckBox
-    Left = 12
-    Top = 467
-    Width = 137
+    Left = 13
+    Top = 489
+    Width = 88
     Height = 17
+    TabStop = False
     Caption = #1042#1082#1083#1102#1095#1080#1090#1100
-    TabOrder = 9
+    TabOrder = 10
+  end
+  object txtKolCopy: TNumberBox
+    Left = 162
+    Top = 452
+    Width = 45
+    Height = 23
+    Alignment = taRightJustify
+    Decimal = 0
+    MinValue = 1.000000000000000000
+    MaxValue = 10.000000000000000000
+    TabOrder = 7
+    Value = 1.000000000000000000
+    SpinButtonOptions.ArrowWidth = 10
+    SpinButtonOptions.Placement = nbspCompact
   end
   object SelectFolder: TFileOpenDialog
     DefaultFolder = 'c:\'

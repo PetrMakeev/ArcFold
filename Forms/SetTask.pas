@@ -69,6 +69,8 @@ type
     btnSave: TButton;
     btnCancel: TButton;
     chbOnTask: TCheckBox;
+    txtKolCopy: TNumberBox;
+    Label7: TLabel;
     procedure cmbTipTaskChange(Sender: TObject);
     procedure sbMonthAllOnClick(Sender: TObject);
     procedure sbMonthAllOffClick(Sender: TObject);
@@ -90,7 +92,10 @@ type
                        DayMonthTask:Word;
                        OnTask:integer;
                        SelDay:string;
-                       SelMonth:string);
+                       SelMonth:string;
+                       kolCopy:integer);
+
+
     procedure btnCancelClick(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
     procedure chbCryptZipClick(Sender: TObject);
@@ -254,7 +259,8 @@ begin
                         ifthen(chbMonth10.Checked, '1', '0') +
                         ifthen(chbMonth11.Checked, '1', '0') +
                         ifthen(chbMonth12.Checked, '1', '0'),
-                      ifthen(modeEdit='ADD', 0, 1)
+                      ifthen(modeEdit='ADD', 0, 1),
+                      txtKolCopy.ValueInt
                       );
   close;
 
@@ -333,6 +339,7 @@ begin
     txtCryptWord2.Text := '';
     chbCryptZipClick(Self);
     chbOnTask.Checked := true;
+    txtKolCopy.Value := 5;
   end;
 
 
@@ -341,7 +348,7 @@ end;
 procedure TfrmSetTask.initEDIT(NameTask, FromZip, ToZip, PrefixName: string;
   FormatZip, CompressZip, CryptZip: integer; CryptWord: string; CryptFileName,
   TipTask: integer; TimeTask: TDatetime;  DayMonthTask: Word;
-  OnTask: integer; SelDay:string; SelMonth:string);
+  OnTask: integer; SelDay:string; SelMonth:string; KolCopy:integer);
 begin
   //
   // настраиваем форму по указанному режиму
@@ -399,6 +406,7 @@ begin
   txtCryptWord2.Text := CryptWord;
   chbCryptZipClick(Self);
   chbOnTask.Checked := 1 = OnTask;
+  txtKolCopy.Value := kolCopy;
 
 end;
 

@@ -38,7 +38,6 @@ type
     DBGrid2: TDBGrid;
     dsStack: TDataSource;
     TimerTask: TTimer;
-    Button1: TButton;
     ADOConn: TADOConnection;
     dbSetting: TADOTable;
     dbSettingNameTask: TWideStringField;
@@ -82,7 +81,6 @@ type
     TimerStack: TTimer;
     setExecStack: TADOCommand;
     ImageList: TImageList;
-    Image1: TImage;
     popStack: TPopupMenu;
     popDelStack: TMenuItem;
     qStartTaskKeyStr: TAutoIncField;
@@ -119,6 +117,8 @@ type
     dbFindStackStartTime: TDateTimeField;
     dbFindStackonExec: TSmallintField;
     setLastStartTask: TADOCommand;
+    dbSettingkolCopy: TSmallintField;
+    qStartTaskkolCopy: TSmallintField;
     procedure popRestoreClick(Sender: TObject);
     procedure AppEventsMinimize(Sender: TObject);
     procedure popTaskPopup(Sender: TObject);
@@ -150,7 +150,8 @@ type
                        OnTask:integer;
                        SelDay:string;
                        SelMonth:string;
-                       modeEdit:integer);
+                       modeEdit:integer;
+                       kolCopy:integer);
 
     function ExistRecStack():boolean;
 
@@ -160,7 +161,6 @@ type
     procedure popOffClick(Sender: TObject);
     procedure popEditClick(Sender: TObject);
     procedure dbSettingCalcFields(DataSet: TDataSet);
-    procedure Button1Click(Sender: TObject);
     procedure TimerTaskTimer(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure TimerStackTimer(Sender: TObject);
@@ -224,7 +224,8 @@ begin
                       dbSettingDayMonthTask.AsInteger,
                       dbSettingOnTask.AsInteger,
                       dbSettingSelDay.AsString,
-                      dbSettingSelMonth.AsString    )  ;
+                      dbSettingSelMonth.AsString,
+                      dbSettingKolCopy.AsInteger    )  ;
 
   frmSetTask.ShowModal ;
 
@@ -239,16 +240,6 @@ begin
   SetWindowLong(Application.Handle, GWL_EXSTYLE,
   GetWindowLong(Application.Handle, GWL_EXSTYLE) or (not WS_EX_APPWINDOW));
 end;
-
-
-
-procedure TfrmMain.Button1Click(Sender: TObject);
-begin
-// выполн€ем
-
-  TimerTaskTimer(Self);
-end;
-
 
 
 
@@ -377,7 +368,7 @@ end;
 procedure TfrmMain.SaveSetting(NameTask, FromZip, ToZip, PrefixName: string;
   FormatZip, CompressZip, CryptZip: integer; CryptWord: string; CryptFileName,
   TipTask: integer; TimeTask: TDatetime; DayMonthTask: Word; OnTask: integer; SelDay,
-  SelMonth: string; modeEdit:integer);
+  SelMonth: string; modeEdit:integer; KolCopy:integer);
 var
   tmpDT:Tdatetime;
 begin
@@ -411,6 +402,8 @@ begin
   dbSetting.FieldByName('NextStartStr').AsString := DateTimeToStr(tmpDT);
   if modeEdit=0 then
     dbSetting.FieldByName('LastStart').AsString := 'Ќикогда' ;
+  dbSetting.FieldByName('KolCopy').AsInteger := KolCopy;
+
   dbSetting.Post;
 end;
 
@@ -440,7 +433,8 @@ begin
     exit;
   end;
 
-  //выключаем задачу
+
+  //указываем врем€ запуска
   setLastStartTask.Parameters.ParamByName('ID').Value := qStartTaskID.AsString;
   setLastStartTask.Parameters.ParamByName('LastStart').Value := DateTimeToStr(Now());
   setLastStartTask.Execute;
@@ -451,7 +445,7 @@ begin
   memLog.Lines.Add(qStartTaskNameTask.asString + ' - start');
 
 
-  //указываем врем€ запуска
+
 
 
 
@@ -722,8 +716,12 @@ end;
 procedure TOneMoreThread.execute;
 var
   PrefixName, FromZip, ToZip, CryptWord: string ;
-  CompressZip, CryptZip: integer;
+  CompressZip, CryptZip, KolCopy: integer;
   Arch: I7zOutArchive;
+
+  SearchRec: TSearchRec; // информаци€ о файле или каталоге
+  massiv: Array of String;
+  n, i: LongInt;
 begin
   inherited;
 
@@ -735,7 +733,8 @@ begin
   ToZip := frmMain.qStartTaskToZip.AsString;
   CryptWord := frmMain.qStartTaskCryptWord.AsString;
   CryptZip := frmMain.qStartTaskCryptZip.AsInteger;
-  CompressZip:= frmMain.qStartTaskCompressZip.AsInteger  ;
+  CompressZip := frmMain.qStartTaskCompressZip.AsInteger  ;
+  KolCopy := frmMain.qStartTaskKolCopy.AsInteger  ;
 
   Arch := CreateOutArchive(CLSID_CFormat7Z);
 
@@ -763,9 +762,28 @@ begin
   //логирование
   frmMain.memLog.Lines.Add('end');
 
+  //удал€ем старый архив если количество больше указанного
+  n := 1;
+  if FindFirst(ToZip + '\' + PrefixName + '*.zip', faAnyFile, SearchRec) = 0 then
+  repeat
+     SetLength(massiv, Length(massiv) + 1);
+      massiv[n] := SearchRec.Name;
+      inc(n);
+  until FindNext(SearchRec) <> 0;
+
+  if n-1>kolCopy then
+  begin
+    for i := 0 to n-KolCopy-2 do
+      DeleteFile(ToZip + '\' + massiv[i])
+
+  end;
+
+  FindClose(SearchRec)  ;
 
 end;
 
 
 
 end.
+
+
