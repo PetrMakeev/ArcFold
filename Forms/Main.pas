@@ -119,6 +119,31 @@ type
     setLastStartTask: TADOCommand;
     dbSettingkolCopy: TSmallintField;
     qStartTaskkolCopy: TSmallintField;
+    qCurrTask: TADOQuery;
+    qCurrTaskKeyStr: TAutoIncField;
+    qCurrTaskID: TWideStringField;
+    qCurrTaskNameTask: TWideStringField;
+    qCurrTaskFromZip: TWideStringField;
+    qCurrTaskToZip: TWideStringField;
+    qCurrTaskPrefixName: TWideStringField;
+    qCurrTaskFormatZip: TSmallintField;
+    qCurrTaskCompressZip: TSmallintField;
+    qCurrTaskCryptZip: TSmallintField;
+    qCurrTaskCryptWord: TWideStringField;
+    qCurrTaskCryptFileName: TSmallintField;
+    qCurrTaskTipTask: TSmallintField;
+    qCurrTaskTimeTask: TDateTimeField;
+    qCurrTaskDayMonthTask: TSmallintField;
+    qCurrTaskOnTask: TSmallintField;
+    qCurrTaskSelDay: TWideStringField;
+    qCurrTaskSelMonth: TWideStringField;
+    qCurrTaskLogTask: TWideMemoField;
+    qCurrTaskNextStart: TDateTimeField;
+    qCurrTaskLastStart: TWideStringField;
+    qCurrTaskNextStartStr: TWideStringField;
+    qCurrTaskkolCopy: TSmallintField;
+    upLogTask: TADOCommand;
+    tmpMemo: TMemo;
     procedure popRestoreClick(Sender: TObject);
     procedure AppEventsMinimize(Sender: TObject);
     procedure popTaskPopup(Sender: TObject);
@@ -155,6 +180,8 @@ type
 
     function ExistRecStack():boolean;
 
+    procedure logZip(PrefixName, StrLog:string);
+    procedure ControlCopy(ToZip, FindCopy:string; kolCopy:integer );
 
     procedure popDelClick(Sender: TObject);
     procedure popOnClick(Sender: TObject);
@@ -166,6 +193,9 @@ type
     procedure TimerStackTimer(Sender: TObject);
     procedure popStackPopup(Sender: TObject);
     procedure dbStackCalcFields(DataSet: TDataSet);
+    procedure dbSettingAfterScroll(DataSet: TDataSet);
+    procedure dbStackAfterScroll(DataSet: TDataSet);
+    procedure pgTaskChange(Sender: TObject);
 
 
   private
@@ -243,12 +273,68 @@ end;
 
 
 
+procedure TfrmMain.ControlCopy(ToZip, FindCopy: string; kolCopy: integer);
+var
+  SearchRec: TSearchRec; // информаци€ о файле или каталоге
+  massiv: Array [1..30] of String;
+  n, i: LongInt;
+
+begin
+  //удал€ем старый архив если количество больше указанного
+  n := 1;
+  if FindFirst(FindCopy, faAnyFile, SearchRec) = 0 then
+  repeat
+     //SetLength(massiv, Length(massiv) + 1);
+     massiv[n] := SearchRec.Name;
+     inc(n);
+  until FindNext(SearchRec) <> 0;
+
+  if n-1>kolCopy then
+  begin
+    for i := 1 to n-KolCopy-1 do
+      DeleteFile(ToZip + '\' + massiv[i])
+
+  end;
+
+  FindClose(SearchRec)  ;
+
+end;
+
+procedure TfrmMain.dbSettingAfterScroll(DataSet: TDataSet);
+begin
+  //выводим лог в мемо после движени€ по запис€м
+  memLog.Lines.Clear;
+  memLog.Lines.Add(dbSettingLogTask.AsString);
+
+end;
+
 procedure TfrmMain.dbSettingCalcFields(DataSet: TDataSet);
 begin
   // готовим вычисл€емые пол€
   dbSettingOnTaskv.AsString := ifthen(dbSettingOnTask.AsInteger = 1, 'V', ' ')  ;
 end;
 
+
+procedure TfrmMain.dbStackAfterScroll(DataSet: TDataSet);
+begin
+  //выводим лог в мемо после движени€ по запис€м
+  if (pgTask.ActivePageIndex=1) and (not dbStack.Eof) then
+  begin
+    if qCurrTask.Active then qCurrTask.Close;
+    qCurrTask.Parameters.ParamByName('ID').Value := dbStackID.AsString;
+    qCurrTask.Open;
+    qCurrTask.First;
+    if not qCurrTask.Eof then
+    begin
+      memLog.Lines.Clear;
+      memLog.Lines.Add(qCurrTaskLogTask.AsString);
+    end
+    else
+      memLog.Lines.Clear;
+  end
+  else
+    memLog.Lines.Clear;
+end;
 
 procedure TfrmMain.dbStackCalcFields(DataSet: TDataSet);
 begin
@@ -267,6 +353,39 @@ begin
      Result := true
    else
      Result := false;
+
+end;
+
+procedure TfrmMain.pgTaskChange(Sender: TObject);
+begin
+  memLog.Lines.Clear;
+
+  //выводим лог в мемо после движени€ по запис€м
+  if (pgTask.ActivePageIndex=1) then
+  begin
+    if (not dbStack.Eof) then
+    begin
+      if qCurrTask.Active then qCurrTask.Close;
+      qCurrTask.Parameters.ParamByName('ID').Value := dbStackID.AsString;
+      qCurrTask.Open;
+      qCurrTask.First;
+      if not qCurrTask.Eof then memLog.Lines.Add(qCurrTaskLogTask.AsString);
+    end;
+  end
+  else
+  begin
+    //выводим лог в мемо после движени€ по запис€м
+    if not dbSetting.Eof then  memLog.Lines.Add(dbSettingLogTask.AsString)
+    else
+    begin
+      if dbSetting.Eof and (dbSetting.RecordCount>0) then dbSetting.Last;
+      memLog.Lines.Clear;
+      memLog.Lines.Add(dbSettingLogTask.AsString);
+    end;
+
+
+  end;
+
 
 end;
 
@@ -413,7 +532,8 @@ end;
 procedure TfrmMain.StartTask(ID:string);
 var
   oneMoreThread: TOneMoreThread;
-begin
+  strLog, PrefixName: string;
+  begin
 
   // «апуск задачи
   if qStartTask.Active then qStartTask.Close;
@@ -424,7 +544,8 @@ begin
   //провер€ем наличие пути
   if not DirectoryExists(qStartTaskFromZip.AsString) then
   begin
-    memLog.Lines.Add( qStartTaskNameTask.AsString + '- путь архивации не найден');
+    LogZip(qStartTaskPrefixName.AsString, '«адача <' + qStartTaskNameTask.AsString + '> - путь архивации не найден, задача выключена' );
+
     //выключаем задачу
     setOnTask.Parameters.ParamByName('ID').Value := qStartTaskID.AsString;
     setOnTask.Parameters.ParamByName('OnTask').Value := 0;
@@ -438,15 +559,12 @@ begin
   setLastStartTask.Parameters.ParamByName('ID').Value := qStartTaskID.AsString;
   setLastStartTask.Parameters.ParamByName('LastStart').Value := DateTimeToStr(Now());
   setLastStartTask.Execute;
-  dbSetting.Requery();
 
 
   //логирование !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  memLog.Lines.Add(qStartTaskNameTask.asString + ' - start');
+  strLog := '«адача запущена - ' + DateTimeToStr(Now());
 
-
-
-
+  logZip(qStartTaskPrefixName.AsString, strLog);
 
 
 
@@ -521,13 +639,13 @@ begin
 
     end;
 
-    memLog.Lines.Add('добавл€ем задачу -' + dbFindTaskNameTask.AsString + ' - ' + DateTimeToStr(dbFindTaskNextStart.AsDateTime));
+    //memLog.Lines.Add('добавл€ем задачу -' + dbFindTaskNameTask.AsString + ' - ' + DateTimeToStr(dbFindTaskNextStart.AsDateTime));
 
 
-    if not flFind then
-      //стек пуст запускаем задачу
-      statusStr := 0
-    else
+//    if not flFind then
+//      //стек пуст первую задачу указываем как ¬ыполн€етс€
+//      statusStr := 0
+//    else
       statusStr := 1;
 
     addExecTask.Prepared;
@@ -543,12 +661,16 @@ begin
     dbStack.Requery() ;
     DBGrid1.Refresh;
 
-    // запускаем задачу если стек был пуст
-    if not flFind then
-      StartTask(dbFindTaskID.AsString);
 
     dbFindTask.Next;
   end;
+
+//  // запускаем задачу если стек был пуст
+//  if not flFind then
+//  begin
+//    dbFindTask.First;
+//    StartTask(dbFindTaskID.AsString);
+//  end;
 
 end;
 
@@ -711,30 +833,58 @@ end;
 
 
 
+procedure TfrmMain.logZip(PrefixName, StrLog: string);
+var
+  ListLog : TStringList;
+  logStr    : string;
+  pathLog:string;
+  LogName:string;
+begin
+  pathLog := ExtractFilePath(Application.ExeName) + '\Logs';
+  logName :=  pathLog +'\' + qStartTaskPrefixName.AsString + '.log';
+
+  if not DirectoryExists(pathLog) then CreateDir(pathLog);
+
+  ListLog := TStringList.Create; //—оздал —тринг√рид
+
+  if FileExists(logName) then
+    ListLog.LoadFromFile(logName)
+  else
+    ListLog.Clear;;
+
+  ListLog.Add(strLog ); //≈сли надо дописать строку в конец файла
+
+  ListLog.SaveToFile(logName); //—охранил в этот же файл
+  ListLog.Free; //”бил —трингЋист
+
+
+end;
+
 { TOneMoreThread }
 
 procedure TOneMoreThread.execute;
 var
-  PrefixName, FromZip, ToZip, CryptWord: string ;
+  ID, NAmeTask, PrefixName, PrefixNameDT, FromZip, ToZip, CryptWord, Log: string ;
   CompressZip, CryptZip, KolCopy: integer;
   Arch: I7zOutArchive;
 
-  SearchRec: TSearchRec; // информаци€ о файле или каталоге
-  massiv: Array of String;
-  n, i: LongInt;
+  strLog: string;
 begin
   inherited;
 
-    //архивируем в отдельном потоке
-
+  //архивируем в отдельном потоке
+  ID:= frmMain.execIDTask;
   frmMain.qStartTask.First;
-  PrefixName := frmMain.qStartTaskPrefixName.AsString + ReplaceStr(DateTimeToStr(Now()), ':', '.');
+  NameTask := frmMain.qStartTaskNameTask.AsString;
+  PrefixName := frmMain.qStartTaskPrefixName.AsString;
+  PrefixNameDT := frmMain.qStartTaskPrefixName.AsString + ReplaceStr(DateTimeToStr(Now()), ':', '.');
   FromZip := frmMain.qStartTaskFromZip.AsString;
   ToZip := frmMain.qStartTaskToZip.AsString;
   CryptWord := frmMain.qStartTaskCryptWord.AsString;
   CryptZip := frmMain.qStartTaskCryptZip.AsInteger;
   CompressZip := frmMain.qStartTaskCompressZip.AsInteger  ;
   KolCopy := frmMain.qStartTaskKolCopy.AsInteger  ;
+  Log := frmMain.qStartTaskLogTask.AsString;
 
   Arch := CreateOutArchive(CLSID_CFormat7Z);
 
@@ -752,33 +902,21 @@ begin
     Arch.SetPassword('');
 
   // Save to file
-  Arch.SaveToFile(ToZip+'\'+PrefixName+'.zip');
+  Arch.SaveToFile(ToZip+'\'+PrefixNameDT+'.zip');
 
   //после выполнени€ архивировани€ удал€ем из стека задачу
-  frmMain.delExecStack.Parameters.ParamByName('ID').Value := frmMain.execIDTask;
+  frmMain.delExecStack.Parameters.ParamByName('ID').Value := ID;
   frmMain.delExecStack.Execute;
   frmMain.dbStack.Requery();
 
   //логирование
-  frmMain.memLog.Lines.Add('end');
+  //логирование !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  strLog := '«адача выполнена - ' + DateTimeToStr(Now());
+  frmMain.logZip(PrefixName, strLog);
 
-  //удал€ем старый архив если количество больше указанного
-  n := 1;
-  if FindFirst(ToZip + '\' + PrefixName + '*.zip', faAnyFile, SearchRec) = 0 then
-  repeat
-     SetLength(massiv, Length(massiv) + 1);
-      massiv[n] := SearchRec.Name;
-      inc(n);
-  until FindNext(SearchRec) <> 0;
 
-  if n-1>kolCopy then
-  begin
-    for i := 0 to n-KolCopy-2 do
-      DeleteFile(ToZip + '\' + massiv[i])
+  frmMain.ControlCopy(ToZip, ToZip + '\' + PrefixName + '*.zip', kolCopy);
 
-  end;
-
-  FindClose(SearchRec)  ;
 
 end;
 

@@ -4413,6 +4413,7 @@ object frmMain: TfrmMain
     ActivePage = tabTask
     Align = alTop
     TabOrder = 0
+    OnChange = pgTaskChange
     ExplicitWidth = 663
     object tabTask: TTabSheet
       Caption = #1047#1072#1076#1072#1095#1080
@@ -4524,8 +4525,17 @@ object frmMain: TfrmMain
     Align = alBottom
     ReadOnly = True
     TabOrder = 1
-    ExplicitTop = 199
-    ExplicitWidth = 663
+    ExplicitTop = 202
+  end
+  object tmpMemo: TMemo
+    Left = 480
+    Top = 179
+    Width = 73
+    Height = 17
+    Lines.Strings = (
+      'tmpMemo')
+    TabOrder = 2
+    Visible = False
   end
   object MainMenu1: TMainMenu
     Left = 56
@@ -8975,8 +8985,8 @@ object frmMain: TfrmMain
   end
   object dsStack: TDataSource
     DataSet = dbStack
-    Left = 248
-    Top = 288
+    Left = 352
+    Top = 280
   end
   object TimerTask: TTimer
     Enabled = False
@@ -8999,6 +9009,7 @@ object frmMain: TfrmMain
     Connection = ADOConn
     CursorType = ctStatic
     Filtered = True
+    AfterScroll = dbSettingAfterScroll
     OnCalcFields = dbSettingCalcFields
     TableName = 'Task'
     Left = 24
@@ -9121,8 +9132,8 @@ object frmMain: TfrmMain
     CommandText = 'delete from stack where 1=1'
     Connection = ADOConn
     Parameters = <>
-    Left = 312
-    Top = 288
+    Left = 600
+    Top = 280
   end
   object existStack: TADOQuery
     Connection = ADOConn
@@ -9130,8 +9141,8 @@ object frmMain: TfrmMain
     Parameters = <>
     SQL.Strings = (
       'select * from stack')
-    Left = 320
-    Top = 232
+    Left = 424
+    Top = 280
     object existStackKeyStr: TAutoIncField
       FieldName = 'KeyStr'
       ReadOnly = True
@@ -9158,9 +9169,9 @@ object frmMain: TfrmMain
     SQL.Strings = (
       'SELECT Stack.ID, Stack.NameTask, Stack.StartTime, Stack.onExec'
       'FROM Stack '
-      'ORDER BY Stack.StartTime')
-    Left = 392
-    Top = 232
+      '')
+    Left = 424
+    Top = 224
     object dbFindStackID: TWideStringField
       FieldName = 'ID'
       Size = 255
@@ -9287,18 +9298,19 @@ object frmMain: TfrmMain
         Size = 510
         Value = Null
       end>
-    Left = 496
-    Top = 288
+    Left = 528
+    Top = 280
   end
   object dbStack: TADOQuery
     Connection = ADOConn
     CursorType = ctStatic
+    AfterScroll = dbStackAfterScroll
     OnCalcFields = dbStackCalcFields
     Parameters = <>
     SQL.Strings = (
       'select * from stack')
-    Left = 248
-    Top = 232
+    Left = 352
+    Top = 224
     object dbStackKeyStr: TAutoIncField
       FieldName = 'KeyStr'
       ReadOnly = True
@@ -9365,11 +9377,12 @@ object frmMain: TfrmMain
         Size = 510
         Value = Null
       end>
-    Left = 496
-    Top = 232
+    Left = 528
+    Top = 224
   end
   object TimerStack: TTimer
     Enabled = False
+    Interval = 3000
     OnTimer = TimerStackTimer
     Left = 548
     Top = 104
@@ -9396,8 +9409,8 @@ object frmMain: TfrmMain
         Size = 510
         Value = Null
       end>
-    Left = 568
-    Top = 232
+    Left = 600
+    Top = 224
   end
   object ImageList: TImageList
     Left = 612
@@ -9733,6 +9746,129 @@ object frmMain: TfrmMain
         Value = Null
       end>
     Left = 160
+    Top = 280
+  end
+  object qCurrTask: TADOQuery
+    Connection = ADOConn
+    CursorType = ctStatic
+    Parameters = <
+      item
+        Name = 'ID'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end>
+    SQL.Strings = (
+      'SELECT *'
+      'FROM Task '
+      'WHERE ID=:ID')
+    Left = 256
+    Top = 224
+    object qCurrTaskKeyStr: TAutoIncField
+      FieldName = 'KeyStr'
+      ReadOnly = True
+    end
+    object qCurrTaskID: TWideStringField
+      FieldName = 'ID'
+      Size = 255
+    end
+    object qCurrTaskNameTask: TWideStringField
+      FieldName = 'NameTask'
+      Size = 200
+    end
+    object qCurrTaskFromZip: TWideStringField
+      FieldName = 'FromZip'
+      Size = 255
+    end
+    object qCurrTaskToZip: TWideStringField
+      FieldName = 'ToZip'
+      Size = 255
+    end
+    object qCurrTaskPrefixName: TWideStringField
+      FieldName = 'PrefixName'
+      Size = 255
+    end
+    object qCurrTaskFormatZip: TSmallintField
+      FieldName = 'FormatZip'
+    end
+    object qCurrTaskCompressZip: TSmallintField
+      FieldName = 'CompressZip'
+    end
+    object qCurrTaskCryptZip: TSmallintField
+      FieldName = 'CryptZip'
+    end
+    object qCurrTaskCryptWord: TWideStringField
+      FieldName = 'CryptWord'
+      Size = 50
+    end
+    object qCurrTaskCryptFileName: TSmallintField
+      FieldName = 'CryptFileName'
+    end
+    object qCurrTaskTipTask: TSmallintField
+      FieldName = 'TipTask'
+    end
+    object qCurrTaskTimeTask: TDateTimeField
+      FieldName = 'TimeTask'
+    end
+    object qCurrTaskDayMonthTask: TSmallintField
+      FieldName = 'DayMonthTask'
+    end
+    object qCurrTaskOnTask: TSmallintField
+      FieldName = 'OnTask'
+    end
+    object qCurrTaskSelDay: TWideStringField
+      FieldName = 'SelDay'
+      Size = 7
+    end
+    object qCurrTaskSelMonth: TWideStringField
+      FieldName = 'SelMonth'
+      Size = 12
+    end
+    object qCurrTaskLogTask: TWideMemoField
+      FieldName = 'LogTask'
+      BlobType = ftWideMemo
+    end
+    object qCurrTaskNextStart: TDateTimeField
+      FieldName = 'NextStart'
+    end
+    object qCurrTaskLastStart: TWideStringField
+      FieldName = 'LastStart'
+      Size = 255
+    end
+    object qCurrTaskNextStartStr: TWideStringField
+      FieldName = 'NextStartStr'
+      Size = 255
+    end
+    object qCurrTaskkolCopy: TSmallintField
+      FieldName = 'kolCopy'
+    end
+  end
+  object upLogTask: TADOCommand
+    CommandText = 'update Task'#13#10'set LogTask=:LogTask'#13#10'where ID=:ID'
+    Connection = ADOConn
+    Parameters = <
+      item
+        Name = 'LogTask'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'ID'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end>
+    Left = 256
     Top = 280
   end
 end
