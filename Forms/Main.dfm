@@ -4410,7 +4410,7 @@ object frmMain: TfrmMain
     Top = 0
     Width = 667
     Height = 177
-    ActivePage = tabTask
+    ActivePage = tabStack
     Align = alTop
     TabOrder = 0
     OnChange = pgTaskChange
@@ -4525,7 +4525,8 @@ object frmMain: TfrmMain
     Align = alBottom
     ReadOnly = True
     TabOrder = 1
-    ExplicitTop = 202
+    ExplicitTop = 199
+    ExplicitWidth = 663
   end
   object tmpMemo: TMemo
     Left = 480
@@ -9304,7 +9305,6 @@ object frmMain: TfrmMain
   object dbStack: TADOQuery
     Connection = ADOConn
     CursorType = ctStatic
-    AfterScroll = dbStackAfterScroll
     OnCalcFields = dbStackCalcFields
     Parameters = <>
     SQL.Strings = (

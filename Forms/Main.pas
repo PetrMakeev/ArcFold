@@ -194,7 +194,6 @@ type
     procedure popStackPopup(Sender: TObject);
     procedure dbStackCalcFields(DataSet: TDataSet);
     procedure dbSettingAfterScroll(DataSet: TDataSet);
-    procedure dbStackAfterScroll(DataSet: TDataSet);
     procedure pgTaskChange(Sender: TObject);
 
 
@@ -301,10 +300,17 @@ begin
 end;
 
 procedure TfrmMain.dbSettingAfterScroll(DataSet: TDataSet);
+var
+  logName, pathLog:string;
 begin
   //выводим лог в мемо после движения по записям
   memLog.Lines.Clear;
-  memLog.Lines.Add(dbSettingLogTask.AsString);
+
+  pathLog := ExtractFilePath(Application.ExeName) + '\Logs';
+  logName :=  pathLog +'\' + dbSettingPrefixName.AsString + '.log';
+  if DirectoryExists(PathLog) and FileExists(logName) then
+    memLog.Lines.LoadFromFile(logName);
+
 
 end;
 
@@ -314,27 +320,6 @@ begin
   dbSettingOnTaskv.AsString := ifthen(dbSettingOnTask.AsInteger = 1, 'V', ' ')  ;
 end;
 
-
-procedure TfrmMain.dbStackAfterScroll(DataSet: TDataSet);
-begin
-  //выводим лог в мемо после движения по записям
-  if (pgTask.ActivePageIndex=1) and (not dbStack.Eof) then
-  begin
-    if qCurrTask.Active then qCurrTask.Close;
-    qCurrTask.Parameters.ParamByName('ID').Value := dbStackID.AsString;
-    qCurrTask.Open;
-    qCurrTask.First;
-    if not qCurrTask.Eof then
-    begin
-      memLog.Lines.Clear;
-      memLog.Lines.Add(qCurrTaskLogTask.AsString);
-    end
-    else
-      memLog.Lines.Clear;
-  end
-  else
-    memLog.Lines.Clear;
-end;
 
 procedure TfrmMain.dbStackCalcFields(DataSet: TDataSet);
 begin
@@ -358,32 +343,10 @@ end;
 
 procedure TfrmMain.pgTaskChange(Sender: TObject);
 begin
-  memLog.Lines.Clear;
-
-  //выводим лог в мемо после движения по записям
-  if (pgTask.ActivePageIndex=1) then
+  memLog.Clear;
+  if pgTask.ActivePageIndex=0 then
   begin
-    if (not dbStack.Eof) then
-    begin
-      if qCurrTask.Active then qCurrTask.Close;
-      qCurrTask.Parameters.ParamByName('ID').Value := dbStackID.AsString;
-      qCurrTask.Open;
-      qCurrTask.First;
-      if not qCurrTask.Eof then memLog.Lines.Add(qCurrTaskLogTask.AsString);
-    end;
-  end
-  else
-  begin
-    //выводим лог в мемо после движения по записям
-    if not dbSetting.Eof then  memLog.Lines.Add(dbSettingLogTask.AsString)
-    else
-    begin
-      if dbSetting.Eof and (dbSetting.RecordCount>0) then dbSetting.Last;
-      memLog.Lines.Clear;
-      memLog.Lines.Add(dbSettingLogTask.AsString);
-    end;
-
-
+    dbSetting.AfterScroll(dbSetting);
   end;
 
 
@@ -912,6 +875,8 @@ begin
   //логирование
   //логирование !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   strLog := 'Задача выполнена - ' + DateTimeToStr(Now());
+  frmMain.logZip(PrefixName, strLog);
+  strLog := '----------------------';
   frmMain.logZip(PrefixName, strLog);
 
 
