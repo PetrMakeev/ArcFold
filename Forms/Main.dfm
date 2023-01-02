@@ -4410,7 +4410,7 @@ object frmMain: TfrmMain
     Top = 0
     Width = 667
     Height = 177
-    ActivePage = tabStack
+    ActivePage = tabTask
     Align = alTop
     TabOrder = 0
     OnChange = pgTaskChange
@@ -9382,7 +9382,7 @@ object frmMain: TfrmMain
   end
   object TimerStack: TTimer
     Enabled = False
-    Interval = 3000
+    Interval = 2000
     OnTimer = TimerStackTimer
     Left = 548
     Top = 104
