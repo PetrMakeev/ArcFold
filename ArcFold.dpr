@@ -5,7 +5,8 @@ uses
   Main in 'Forms\Main.pas' {frmMain},
   SetTask in 'Forms\SetTask.pas' {frmSetTask},
   sevenzip in 'sevenzip.pas',
-  unitDM in 'unitDM.pas' {DM: TDataModule};
+  unitDM in 'unitDM.pas' {DM: TDataModule},
+  Func in 'Func.pas';
 
 {$R *.res}
 

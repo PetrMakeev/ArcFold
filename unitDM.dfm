@@ -886,4 +886,71 @@ object DM: TDM
     Left = 120
     Top = 344
   end
+  object setNextStartTask: TADOCommand
+    CommandText = 
+      'update Task'#13#10'set NextStart=:NextStart,'#13#10'     NextStartStr = :Nex' +
+      'tStartStr'#13#10'where ID=:ID'
+    Connection = ADOConn
+    Parameters = <
+      item
+        Name = 'NextStart'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'NextStartStr'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'ID'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end>
+    Left = 368
+    Top = 144
+  end
+  object qTask: TADOQuery
+    Connection = ADOConn
+    CursorType = ctStatic
+    OnCalcFields = dbSettingCalcFields
+    Parameters = <>
+    SQL.Strings = (
+      'select * from Task')
+    Left = 472
+    Top = 80
+    object qTaskTipTask: TSmallintField
+      FieldName = 'TipTask'
+    end
+    object qTaskTimeTask: TDateTimeField
+      FieldName = 'TimeTask'
+    end
+    object qTaskDayMonthTask: TSmallintField
+      FieldName = 'DayMonthTask'
+    end
+    object qTaskSelDay: TWideStringField
+      FieldName = 'SelDay'
+      Size = 7
+    end
+    object qTaskSelMonth: TWideStringField
+      FieldName = 'SelMonth'
+      Size = 12
+    end
+    object qTaskID: TWideStringField
+      FieldName = 'ID'
+      Size = 255
+    end
+  end
 end

@@ -88,14 +88,33 @@ type
     setExecStack: TADOCommand;
     clearStack: TADOCommand;
     delExecStack: TADOCommand;
-    procedure dbSettingAfterScroll(DataSet: TDataSet);
+    setNextStartTask: TADOCommand;
+    qTask: TADOQuery;
+    qTaskTipTask: TSmallintField;
+    qTaskTimeTask: TDateTimeField;
+    qTaskDayMonthTask: TSmallintField;
+    qTaskSelDay: TWideStringField;
+    qTaskSelMonth: TWideStringField;
+    qTaskID: TWideStringField;
     procedure dbSettingCalcFields(DataSet: TDataSet);
     procedure DataModuleCreate(Sender: TObject);
     procedure dbStackCalcFields(DataSet: TDataSet);
+    procedure dbSettingAfterScroll(DataSet: TDataSet);
+
+    procedure dbSettingRefresh();
+
   private
+    FpathExe: string;
+    FstartMain: boolean;
+    procedure SetpathExe(const Value: string);
+    procedure SetstartMain(const Value: boolean);
     { Private declarations }
   public
     { Public declarations }
+
+    property pathExe:string read FpathExe write SetpathExe;
+    property startMain:boolean read FstartMain write SetstartMain;
+
   end;
 
 var
@@ -106,15 +125,23 @@ implementation
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
 uses
-  Main;
+  Main, Func;
 
 {$R *.dfm}
 
 procedure TDM.DataModuleCreate(Sender: TObject);
 var
-  pathExe:string;
+  NextStart:TDateTime;
+  TipTask: integer;
+  TimeTask: TDateTime;
+  SelDay, SelMonth :string;
+  DayMonthTask :Word;
+
 begin
-  pathExe := ExtractFilePath(Application.ExeName);
+
+  DM.startMain := false;
+
+  DM.pathExe := ExtractFilePath(Application.ExeName);
 
   if AdoConn.Connected then  AdoConn.Close;
 
@@ -126,19 +153,43 @@ begin
   if not DM.dbFindTask.Active then DM.dbFindTask.Active := true;
   if not DM.dbFindStack.Active then DM.dbFindStack.Active := true;
 
+
+  //удаляем стек задач
+  //clearStack.Execute ;      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  dbStack.Requery();
+
+  // пересчитываем время запуска задач в планировщике
+  if qTask.Active then qTask.Close;
+  qTask.Open;
+  while not qTask.Eof do
+  begin
+    TipTask := qTaskTipTask.asInteger;
+    TimeTask := qTaskTimeTask.asDatetime;
+    SelDay := qTaskSelDay.asString;
+    SelMonth := qTaskSelMonth.asString;
+    DayMonthTask := qTaskDayMonthTask.asInteger;
+
+    NextStart := FindNextStart( TipTask,
+                                TimeTask,
+                                SelDay,
+                                SelMonth,
+                                DayMonthTask);
+
+    setNextStartTask.Parameters.ParamByName('ID').Value := qTaskID.asString;
+    setNextStartTask.Parameters.ParamByName('NextStart').Value := NextStart;
+    setNextStartTask.Parameters.ParamByName('NextStartStr').Value := DateTimeToStr(NextStart);
+    setNextStartTask.execute;
+    qTask.Next;
+  end;
+
+  dbSetting.Requery();
+
 end;
 
 procedure TDM.dbSettingAfterScroll(DataSet: TDataSet);
-var
-  logName, pathLog:string;
 begin
-  //выводим лог в мемо после движения по записям
-  //frmMain.memLog.Lines.Clear;
-
-  pathLog := ExtractFilePath(Application.ExeName) + '\Logs';
-  logName :=  pathLog +'\' + dbSettingPrefixName.AsString + '.log';
-  if DirectoryExists(PathLog) and FileExists(logName) then
-    frmMain.memLog.Lines.LoadFromFile(logName);
+  if DM.startMain then
+    frmMain.viewLog(dbSettingPrefixName.AsString)
 end;
 
 procedure TDM.dbSettingCalcFields(DataSet: TDataSet);
@@ -147,12 +198,36 @@ begin
   dbSettingOnTaskv.AsString := ifthen(dbSettingOnTask.AsInteger = 1, 'V', ' ')  ;
 end;
 
+procedure TDM.dbSettingRefresh;
+var
+  BM: TBookMark;
+begin
+  // обновляем датасет с сохранение позиции курсора
+  BM := dbSetting.GetBookMark;
+  dbSetting.Requery() ;
+  dbSetting.GotoBookmark(BM);
+
+end;
+
 procedure TDM.dbStackCalcFields(DataSet: TDataSet);
 begin
   if dbStackOnExec.AsInteger=0 then
     dbStackOnExecV.AsString := 'Выполняется'
   else
     dbStackOnExecV.AsString := 'В очереди...';
+end;
+
+
+
+// -------------------------
+procedure TDM.SetpathExe(const Value: string);
+begin
+  FpathExe := Value;
+end;
+
+procedure TDM.SetstartMain(const Value: boolean);
+begin
+  FstartMain := Value;
 end;
 
 end.

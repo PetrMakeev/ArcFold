@@ -10,10 +10,6 @@ uses
 
 type
 
-  TOneMoreThread=class(tthread)
-  protected
-    procedure execute; override;
-  end;
 
   TfrmMain = class(TForm)
     MainMenu1: TMainMenu;
@@ -41,6 +37,7 @@ type
     popStack: TPopupMenu;
     popDelStack: TMenuItem;
     tmpMemo: TMemo;
+    Button2: TButton;
     procedure popRestoreClick(Sender: TObject);
     procedure AppEventsMinimize(Sender: TObject);
     procedure popTaskPopup(Sender: TObject);
@@ -49,13 +46,6 @@ type
     procedure AddSetting();
 
     procedure StartTask(ID:string);
-
-    function FindNextStart(TipTask:integer;
-                          TimeTask:TDateTime;
-                          SelDay:string;
-                          SelMonth:string;
-                          DayMonthTask:word
-                          ):TDateTime;
 
     procedure SaveSetting(ID:string;
                            NameTask:string;
@@ -78,7 +68,6 @@ type
 
     function ExistRecStack():boolean;
 
-    procedure logZip(PrefixName, StrLog:string);
     procedure ControlCopy(ToZip, FindCopy:string; kolCopy:integer );
 
     procedure popDelClick(Sender: TObject);
@@ -91,18 +80,18 @@ type
     procedure popStackPopup(Sender: TObject);
     procedure pgTaskChange(Sender: TObject);
 
+    procedure viewLog(PrefixName:string);
+    procedure Button2Click(Sender: TObject);
+
 
   private
     FexecIDTask: string;
-    FpathExe: string;
     procedure SetexecIDTask(const Value: string);
-    procedure SetpathExe(const Value: string);
     { Private declarations }
 
   public
     { Public declarations }
     property execIDTask: string read FexecIDTask write SetexecIDTask;
-    property pathExe:string read FpathExe write SetpathExe;
 
   end;
 
@@ -112,7 +101,7 @@ var
 implementation
 
 uses
-  SetTask, sevenzip, unitDM;
+  SetTask, sevenzip, unitDM, Func;
 
 {$R *.dfm}
 
@@ -122,10 +111,7 @@ begin
 end;
 
 
-procedure TfrmMain.SetpathExe(const Value: string);
-begin
-  FpathExe := Value;
-end;
+
 
 //-----------------------------------------------
 
@@ -174,6 +160,19 @@ begin
 end;
 
 
+
+procedure TfrmMain.Button2Click(Sender: TObject);
+begin
+    //Добавляем задачу в стек
+    DM.addExecTask.Parameters.ParamByName('ID').Value := DM.dbSettingID.AsString;
+    DM.addExecTask.Parameters.ParamByName('NameTask').Value := DM.dbSettingNameTask.AsString;
+    DM.addExecTask.Parameters.ParamByName('StartTime').Value := DM.dbSettingNextStart.AsDateTime;
+    DM.addExecTask.Parameters.ParamByName('onExec').Value := 1 ;   // статус В ожидании...
+    DM.addExecTask.Execute;
+    DM.dbStack.Requery() ;
+    DBGrid1.Refresh;
+
+end;
 
 procedure TfrmMain.ControlCopy(ToZip, FindCopy: string; kolCopy: integer);
 var
@@ -250,7 +249,9 @@ begin
     DM.setOnTask.Parameters.ParamByName('ID').Value := DM.dbSettingID.AsString;
     DM.setOnTask.Parameters.ParamByName('OnTask').Value := 0;
     DM.setOnTask.Execute;
-    DM.dbSetting.Requery();
+    DM.dbSettingRefresh();
+    
+    //DM.dbSetting.Requery();
 
 end;
 
@@ -260,7 +261,9 @@ begin
     DM.setOnTask.Parameters.ParamByName('ID').Value := DM.dbSettingID.AsString;
     DM.setOnTask.Parameters.ParamByName('OnTask').Value := 1;
     DM.setOnTask.Execute;
-    DM.dbSetting.Requery();
+    DM.dbSettingRefresh();
+    
+    //DM.dbSetting.Requery();
 
 end;
 
@@ -393,57 +396,133 @@ begin
     DM.upTask.Parameters.ParamByName('LastStart').Value := tmpDT ;
     DM.upTask.Parameters.ParamByName('KolCopy').Value := KolCopy;
     DM.upTask.Execute;
-    DM.dbSetting.Requery();
+    DM.dbSettingRefresh();
+    //DM.dbSetting.Requery();
   end;
 end;
 
 
 
-// Запуск задачи в отдельном потоке
+// Запуск задачи
 procedure TfrmMain.StartTask(ID:string);
 var
-  oneMoreThread: TOneMoreThread;
-  strLog, PrefixName: string;
-  begin
+  NameTask, PrefixName, PrefixNameDT, FromZip, ToZip, CryptWord, Log, SelDay, SelMonth: string ;
+  TipTask, CompressZip, CryptZip, KolCopy, DayMonthTask: integer;
+  NextStart, TimeTask: TDateTime;
+  Arch: I7zOutArchive;
+  strLog: string;
+begin
 
   // Запуск задачи
   if DM.qStartTask.Active then DM.qStartTask.Close;
-  DM.qStartTask.Prepared;
+  //DM.qStartTask.Prepared;
   DM.qStartTask.Parameters.ParamByName('ID').Value := ID;
   DM.qStartTask.Open;
 
   //проверяем наличие пути
   if not DirectoryExists(DM.qStartTaskFromZip.AsString) then
   begin
-    LogZip(DM.qStartTaskPrefixName.AsString, 'Задача <' + DM.qStartTaskNameTask.AsString + '> - путь архивации не найден, задача выключена' );
+    LogZip(DM.pathExe + 'Logs',
+           DM.pathExe + 'Logs\' + DM.qStartTaskPrefixName.AsString + '.log',
+           'Задача <' + DM.qStartTaskNameTask.AsString + '> - путь архивации не найден, задача выключена' );
 
-    //выключаем задачу
-    DM.setOnTask.Parameters.ParamByName('ID').Value := DM.qStartTaskID.AsString;
+    //путь не найден выключаем задачу
+    DM.setOnTask.Parameters.ParamByName('ID').Value := ID;
     DM.setOnTask.Parameters.ParamByName('OnTask').Value := 0;
     DM.setOnTask.Execute;
-    DM.dbSetting.Requery();
+    DM.dbSettingRefresh();
+    //DM.dbSetting.Requery();
     exit;
   end;
 
 
   //указываем время запуска
-  DM.setLastStartTask.Parameters.ParamByName('ID').Value := DM.qStartTaskID.AsString;
+  DM.setLastStartTask.Parameters.ParamByName('ID').Value := ID;
   DM.setLastStartTask.Parameters.ParamByName('LastStart').Value := DateTimeToStr(Now());
   DM.setLastStartTask.Execute;
+  DM.dbSettingRefresh();
+  //DM.dbSetting.Requery();
 
 
   //логирование !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   strLog := 'Задача запущена - ' + DateTimeToStr(Now());
 
-  logZip(DM.qStartTaskPrefixName.AsString, strLog);
+  logZip(DM.pathExe + 'Logs',
+         DM.pathExe + 'Logs\'+ DM.qStartTaskPrefixName.AsString + '.log',
+         strLog);
+
+
+  //архивируем 
+  DM.qStartTask.First;
+  NameTask := DM.qStartTaskNameTask.AsString;
+  PrefixName := DM.qStartTaskPrefixName.AsString;
+  PrefixNameDT := DM.qStartTaskPrefixName.AsString + ReplaceStr(DateTimeToStr(Now()), ':', '.');
+  FromZip := DM.qStartTaskFromZip.AsString;
+  ToZip := DM.qStartTaskToZip.AsString;
+  CryptWord := DM.qStartTaskCryptWord.AsString;
+  CryptZip := DM.qStartTaskCryptZip.AsInteger;
+  CompressZip := DM.qStartTaskCompressZip.AsInteger  ;
+  KolCopy := DM.qStartTaskKolCopy.AsInteger  ;
+  Log := DM.qStartTaskLogTask.AsString;
+
+  TipTask := DM.qStartTaskTipTask.AsInteger ;
+  TimeTask := DM.qStartTaskTimeTask.asDateTime;
+  SelDay := DM.qStartTaskSelDay.AsString;
+  SelMonth := DM.qStartTaskSelMonth.AsString;
+  DayMonthTask := DM.qStartTaskDayMonthTask.AsInteger  ;
+
+  Arch := CreateOutArchive(CLSID_CFormat7Z);
+
+  Arch.AddFiles(FromZip, '', '*', true);
+
+  // compression level
+  SetCompressionLevel(Arch, CompressZip);
+
+  SevenZipSetCompressionMethod(Arch, m7BZip2);
+
+  // set a password if necessary
+  if CryptZip=1 then
+    Arch.SetPassword(CryptWord)
+  else
+    Arch.SetPassword('');
+
+  // Save to file
+  Arch.SaveToFile(ToZip+'\'+PrefixNameDT+'.zip');
 
 
 
-  //Запускаем архивирование в отдельном потоке
-  execIDTask := ID;
-  oneMoreThread := TOneMoreThread.Create(false); // << false означает авто запуск потока
-  oneMoreThread.FreeOnTerminate := true; // << Уничтожение после выполнения
-  //oneMoreThread.Resume;
+  //логирование !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  strLog := 'Задача выполнена - ' + DateTimeToStr(Now());
+  logZip(DM.pathExe + 'Logs',
+         DM.pathExe + 'Logs\' + DM.qStartTaskPrefixName.AsString + '.log',
+         strLog);
+  strLog := '----------------------';
+  logZip(DM.pathExe + 'Logs',
+         DM.pathExe + 'Logs\' + DM.qStartTaskPrefixName.AsString + '.log',
+         strLog);
+
+
+  frmMain.ControlCopy(ToZip, ToZip + '\' + PrefixName + '*.zip', kolCopy);
+
+  //после выполнения задачи определяем следующий старт задачи
+  NextStart := FindNextStart( TipTask,
+                              TimeTask,
+                              SelDay,
+                              SelMonth,
+                              DayMonthTask);
+
+  DM.setNextStartTask.Parameters.ParamByName('ID').Value := ID;
+  DM.setNextStartTask.Parameters.ParamByName('NextStart').Value := NextStart;
+  DM.setNextStartTask.Parameters.ParamByName('NextStartStr').Value := DateTimeToStr(NextStart);
+  DM.setNextStartTask.execute;
+  DM.dbSettingRefresh();
+  //DM.dbSetting.Requery();
+
+  //после выполнения архивирования удаляем из стека задачу
+  DM.delExecStack.Parameters.ParamByName('ID').Value := ID;
+  DM.delExecStack.Execute;
+  DM.dbStack.Requery();
+  DBGrid2.Refresh();
 
 
 
@@ -460,7 +539,7 @@ begin
   DM.dbFindStack.First;
   if DM.dbFindStackOnExec.AsInteger=1 then
   begin
-    DM.setExecStack.Prepared;
+    //DM.setExecStack.Prepared;
     DM.setExecStack.Parameters.ParamByName('ID').Value := DM.dbFindStackID.AsString;
     DM.setExecStack.Parameters.ParamByName('OnExec').Value := 0;
     DM.setExecStack.Execute;
@@ -480,8 +559,7 @@ procedure TfrmMain.TimerTaskTimer(Sender: TObject);
 var
   recNo:integer;
   flFind: boolean;
-  statusStr:integer;
-
+  BM: TBookmark;
 begin
   //перебираем задачи попадающие в запрос для стека
   DM.dbFindTask.Requery();
@@ -511,274 +589,48 @@ begin
 
     end;
 
-    //memLog.Lines.Add('добавляем задачу -' + dbFindTaskNameTask.AsString + ' - ' + DateTimeToStr(dbFindTaskNextStart.AsDateTime));
-
-
-    statusStr := 1;
-
+    //Добавляем задачу в стек
     DM.addExecTask.Prepared;
     DM.addExecTask.Parameters.ParamByName('ID').Value := DM.dbFindTaskID.AsString;
-
     DM.addExecTask.Parameters.ParamByName('NameTask').Value := DM.dbFindTaskNameTask.AsString;
-
     DM.addExecTask.Parameters.ParamByName('StartTime').Value := DM.dbFindTaskNextStart.AsDateTime;
-
-    DM.addExecTask.Parameters.ParamByName('onExec').Value := statusStr ;
-
+    DM.addExecTask.Parameters.ParamByName('onExec').Value := 1 ;   // статус В ожидании...
     DM.addExecTask.Execute;
     DM.dbStack.Requery() ;
-    DBGrid1.Refresh;
-
 
     DM.dbFindTask.Next;
   end;
 
-//  // запускаем задачу если стек был пуст
-//  if not flFind then
-//  begin
-//    dbFindTask.First;
-//    StartTask(dbFindTaskID.AsString);
-//  end;
-
 end;
 
 
-//Определяем дату и время следующего старта задачи
-function TfrmMain.FindNextStart(TipTask: integer; TimeTask: TDateTime; SelDay,
-  SelMonth: string; DayMonthTask: word): TDateTime;
+procedure TfrmMain.viewLog(PrefixName:string) ;
 var
-  tmpHour, tmpMinute, tmpSecond, tmpMSec: Word;
-  tmpDateTime, DateTimeStart, currDateTime:TDateTime;
-  currYear, currMonth, currDay, currHour, currMinute, currSecond, currMSec: Word;
-  currDayWeek, currMonthYear: word;
-  I: Word;
+  FileLog:string;
 begin
-
-  //определяем время следующего старта задачи
-  DecodeTime(TimeTask, tmpHour, tmpMinute, tmpSecond, tmpMSec);
-
-  //фиксируем текущие дату и время
-  DecodeDateTime(Now(), currYear, currMonth, currDay, currHour, currMinute, currSecond, currMSec);
-  currDateTime := EncodeDateTime(currYear, currMonth, currDay, currHour, currMinute, 0, 0);
-  DateTimeStart := EncodeDateTime(currYear, currMonth, currDay, currHour, currMinute, currSecond, currMSec);
-
-  //ежедневно
-  if TipTask=0 then
-  begin
-    tmpDateTime := EncodeDateTime(currYear, currMonth, currDay, tmpHour, tmpMinute, 0, 0);
-    //проверяем прошло время запуска сегодня или нет
-    if currDateTime > tmpDateTime then
-      tmpDateTime := EncodeDateTime(currYear, CurrMonth, CurrDay + 1, tmpHour, tmpMinute, 0, 0);
-
-    DateTimeStart := tmpDateTime;  
-  end;
-
-  //Еженедельно
-  if TipTask=1 then
-  begin
-
-    // определяем текущий день недели
-    currDayWeek := DayOfTheWeek(Now());
-
-    // принимаем точку поиска за дату и время позже на 14 дней
-    DateTimeStart := IncDay(EncodeDateTime(currYear, currMonth, currDay, currHour, currMinute, currSecond, currMSec), 14-CurrDayWeek);
-
-    //перебираем дни недели для определения дня старта задачи
-    for I := 1 to 7 do
-    begin
-
-      // проверить есть ли на данный день недели старт задачи
-      if midStr(SelDay, I, 1) = '1' then
-      begin
-        //формируем на день недели дату и время старта
-        tmpDateTime := IncDay(EncodeDateTime(currYear, CurrMonth, currDay, tmpHour, tmpMinute, 0, 0), -currDayWeek + I );
- 
-        // если старт задачи  прошел то определяем его на следующую неделю
-        if (currDateTime > tmpDateTime) then
-          tmpDateTime := IncDay(EncodeDateTime(currYear, CurrMonth, currDay, tmpHour, tmpMinute, 0, 0), -currDayWeek + I + 1);
-
-        // если найденное tmpDateTime позже currDateTime и DateTimeStart раньше определенного как самое крайнее сохраняем его
-        if (tmpDateTime < DateTimeStart) then
-          if (tmpDateTime > currDateTime) then
-            DateTimeStart := tmpDateTime;
-
-      end;
-
-    end;
-
-   end;
-
-   //ежемесячно
-   if TipTask=2 then
-   begin
-
-    // определяем текущий месяц
-    currMonthYear := MonthOfTheYear(Now());
-
-    // принимаем точку поиска за дату и время позже на 24 месяцев
-    DateTimeStart := IncMonth(EncodeDateTime(currYear, currMonth, currDay, currHour, currMinute, currSecond, currMSec), 24-currMonthYear);
-
-    // перебираем месяцы для определения дня старта задачи
-    for I := 1 to 12 do
-    begin
-      // проверить есть ли на данный день недели старт задачи
-      if midStr(SelMonth, I, 1) = '1' then
-      begin
-
-        //формируем на день недели дату и время старта
-        tmpDateTime := IncMonth(EncodeDateTime(currYear, I, DayMonthTask, tmpHour, tmpMinute, 0, 0), 0); // -currMonthYear + I );
-
-        // если старт задачи  прошел то определяем его на следующий месяц
-        if (currDateTime > tmpDateTime) then
-          tmpDateTime := IncMonth(EncodeDateTime(currYear, I, DayMonthTask, tmpHour, tmpMinute, 0, 0), 12); //-currMonthYear + I + 12);
-
-        // если найденное tmpDateTime позже currDateTime и DateTimeStart раньше определенного как самое крайнее сохраняем его
-        if (tmpDateTime < DateTimeStart) then
-          if (tmpDateTime > currDateTime) then
-            DateTimeStart := tmpDateTime;
-
-      end;
-    end;
-
-   end;
-
-
-  Result := DateTimeStart;
+ ///
+  FileLog := DM.pathExe +'Logs\' + PrefixName + '.log';
+  if DirectoryExists(DM.pathExe+'Logs') and
+     FileExists(FileLog) then
+    memLog.Lines.LoadFromFile(FileLog);
 
 end;
 
 //создаем и настраиваем форму
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
-  //сохраняем путь к запускаемому файлу
-  frmMain.pathExe := ExtractFilePath(Application.ExeName);
 
-  //проверяем задачи в стеке
-  if DM.dbStack.RecordCount>0 then
-  begin
-    // есть незаконченные задания
-    if DM.dbStack.RecordCount>0 then
-      if MessageDlg('В очереди задач есть не запущенные в прошлом сеансе. Очистить очерень задач?' ,mtWarning, [mbYes, mbNo], 0) = mrYes then
-      begin
-        //удаляем
-        DM.clearStack.Execute ;
-      end
-      else
-      begin
-        DM.dbStack.First;
-        if DM.dbStackOnExec.AsInteger=0 then
-        begin
-          //переводим задание стека в ожидание
-          DM.setExecStack.Parameters.ParamByName('ID').Value := DM.dbStackID.AsString;
-          DM.setExecStack.Parameters.ParamByName('OnExec').Value := 1;
-          DM.setExecStack.Execute;
-        end;
-      end;
-
-
-    DM.dbStack.Requery();
-    DM.dbStack.First;
-
-
-  end;
 
   //включаем тамеры
-//  timerTask.Enabled := true;
-//  timerStack.Enabled := true;
+  timerTask.Enabled := true;
+  timerStack.Enabled := true;
 
-
+  // отмечаем создание формы в DM
+  DM.startMain := true;
+  
 end;
 
 
-
-procedure TfrmMain.logZip(PrefixName, StrLog: string);
-var
-  ListLog : TStringList;
-  logStr    : string;
-  pathLog:string;
-  LogName:string;
-begin
-  pathLog := frmMain.pathExe + '\Logs';
-  logName :=  frmMain.pathExe +'\' + DM.qStartTaskPrefixName.AsString + '.log';
-
-  if not DirectoryExists(pathLog) then CreateDir(pathLog);
-
-  ListLog := TStringList.Create; //Создал СтрингГрид
-
-  if FileExists(logName) then
-    ListLog.LoadFromFile(logName)
-  else
-    ListLog.Clear;;
-
-  ListLog.Add(strLog ); //Если надо дописать строку в конец файла
-
-  ListLog.SaveToFile(logName); //Сохранил в этот же файл
-  ListLog.Free; //Убил СтрингЛист
-
-
-end;
-
-{ TOneMoreThread }
-
-procedure TOneMoreThread.execute;
-var
-  ID, NAmeTask, PrefixName, PrefixNameDT, FromZip, ToZip, CryptWord, Log: string ;
-  CompressZip, CryptZip, KolCopy: integer;
-  Arch: I7zOutArchive;
-
-  strLog: string;
-begin
-  inherited;
-
-  //архивируем в отдельном потоке
-  ID:= frmMain.execIDTask;
-  DM.qStartTask.First;
-  NameTask := DM.qStartTaskNameTask.AsString;
-  PrefixName := DM.qStartTaskPrefixName.AsString;
-  PrefixNameDT := DM.qStartTaskPrefixName.AsString + ReplaceStr(DateTimeToStr(Now()), ':', '.');
-  FromZip := DM.qStartTaskFromZip.AsString;
-  ToZip := DM.qStartTaskToZip.AsString;
-  CryptWord := DM.qStartTaskCryptWord.AsString;
-  CryptZip := DM.qStartTaskCryptZip.AsInteger;
-  CompressZip := DM.qStartTaskCompressZip.AsInteger  ;
-  KolCopy := DM.qStartTaskKolCopy.AsInteger  ;
-  Log := DM.qStartTaskLogTask.AsString;
-
-  Arch := CreateOutArchive(CLSID_CFormat7Z);
-
-  Arch.AddFiles(FromZip, '', '*', true);
-
-  // compression level
-  SetCompressionLevel(Arch, CompressZip);
-
-  SevenZipSetCompressionMethod(Arch, m7BZip2);
-
-  // set a password if necessary
-  if CryptZip=1 then
-    Arch.SetPassword(CryptWord)
-  else
-    Arch.SetPassword('');
-
-  // Save to file
-  Arch.SaveToFile(ToZip+'\'+PrefixNameDT+'.zip');
-
-  //после выполнения архивирования удаляем из стека задачу
-  DM.delExecStack.Parameters.ParamByName('ID').Value := ID;
-  DM.delExecStack.Execute;
-  DM.dbStack.Requery();
-
-  //логирование
-  //логирование !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  strLog := 'Задача выполнена - ' + DateTimeToStr(Now());
-  frmMain.logZip(PrefixName, strLog);
-  strLog := '----------------------';
-  frmMain.logZip(PrefixName, strLog);
-
-
-  frmMain.ControlCopy(ToZip, ToZip + '\' + PrefixName + '*.zip', kolCopy);
-
-
-end;
 
 
 
