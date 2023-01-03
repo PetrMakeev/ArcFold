@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{962C1EA1-4FFD-492B-994A-684CBDC3CA9D}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="ArcFold.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="ArcFoldService.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="ArcFold">
+        <MSBuild Projects="ArcFold.dproj"/>
+    </Target>
+    <Target Name="ArcFold:Clean">
+        <MSBuild Projects="ArcFold.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ArcFold:Make">
+        <MSBuild Projects="ArcFold.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ArcFoldService">
+        <MSBuild Projects="ArcFoldService.dproj"/>
+    </Target>
+    <Target Name="ArcFoldService:Clean">
+        <MSBuild Projects="ArcFoldService.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ArcFoldService:Make">
+        <MSBuild Projects="ArcFoldService.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="ArcFold;ArcFoldService"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="ArcFold:Clean;ArcFoldService:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="ArcFold:Make;ArcFoldService:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

@@ -71,6 +71,7 @@ type
     chbOnTask: TCheckBox;
     txtKolCopy: TNumberBox;
     Label7: TLabel;
+    txtID: TEdit;
     procedure cmbTipTaskChange(Sender: TObject);
     procedure sbMonthAllOnClick(Sender: TObject);
     procedure sbMonthAllOffClick(Sender: TObject);
@@ -78,7 +79,8 @@ type
     procedure sbWeekAllOffClick(Sender: TObject);
 
     procedure initADD();
-    procedure initEDIT(NameTask:string;
+    procedure initEDIT(ID:string;
+                       NameTask:string;
                        FromZip:string;
                        ToZip:string;
                        PrefixName:string;
@@ -166,6 +168,12 @@ begin
     exit;
   end;
 
+  if Length(trim(txtToZip.Text))<4  then
+  begin
+    showmessage('Укажите папку для сохранения архива');
+    btnToZip.SetFocus;
+    exit;
+  end;
   if trim(txtPrefixName.Text) = '' then
   begin
     showmessage('Укажите префикс имени архива');
@@ -227,7 +235,8 @@ begin
   end;
 
   // вызываем добавление
-  frmMain.SaveSetting(txtNameTask.Text,
+  frmMain.SaveSetting(txtID.Text,
+                      txtNameTask.Text,
                       txtFromZip.Text,
                       txtToZip.Text,
                       txtPrefixName.Text,
@@ -317,6 +326,7 @@ begin
   if modeEdit = 'ADD' then
   begin
     // режим добавления
+    txtID.Text := DateTimeToStr(Now());
     txtNameTask.Text := '';
     txtFromZip.Text := '';
     txtToZip.Text := '';
@@ -345,7 +355,7 @@ begin
 
 end;
 
-procedure TfrmSetTask.initEDIT(NameTask, FromZip, ToZip, PrefixName: string;
+procedure TfrmSetTask.initEDIT(ID, NameTask, FromZip, ToZip, PrefixName: string;
   FormatZip, CompressZip, CryptZip: integer; CryptWord: string; CryptFileName,
   TipTask: integer; TimeTask: TDatetime;  DayMonthTask: Word;
   OnTask: integer; SelDay:string; SelMonth:string; KolCopy:integer);
@@ -353,6 +363,7 @@ begin
   //
   // настраиваем форму по указанному режиму
   // режим редактирования
+  txtID.Text := ID;
   txtNameTask.Text := NameTask;
   txtFromZip.Text := FromZip;
   txtToZip.Text := ToZip;

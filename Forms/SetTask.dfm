@@ -727,6 +727,14 @@ object frmSetTask: TfrmSetTask
     SpinButtonOptions.ArrowWidth = 10
     SpinButtonOptions.Placement = nbspCompact
   end
+  object txtID: TEdit
+    Left = 138
+    Top = 487
+    Width = 121
+    Height = 23
+    TabOrder = 11
+    Visible = False
+  end
   object SelectFolder: TFileOpenDialog
     DefaultFolder = 'c:\'
     FavoriteLinks = <>

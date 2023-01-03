@@ -21,7 +21,6 @@ type
     popTray: TPopupMenu;
     popRestore: TMenuItem;
     AppEvents: TApplicationEvents;
-    dsSetting: TDataSource;
     popTask: TPopupMenu;
     popAdd: TMenuItem;
     popOn: TMenuItem;
@@ -36,113 +35,11 @@ type
     memLog: TMemo;
     Label1: TLabel;
     DBGrid2: TDBGrid;
-    dsStack: TDataSource;
     TimerTask: TTimer;
-    ADOConn: TADOConnection;
-    dbSetting: TADOTable;
-    dbSettingNameTask: TWideStringField;
-    dbSettingFromZip: TWideStringField;
-    dbSettingToZip: TWideStringField;
-    dbSettingPrefixName: TWideStringField;
-    dbSettingFormatZip: TSmallintField;
-    dbSettingCompressZip: TSmallintField;
-    dbSettingCryptZip: TSmallintField;
-    dbSettingCryptWord: TWideStringField;
-    dbSettingCryptFileName: TSmallintField;
-    dbSettingTipTask: TSmallintField;
-    dbSettingTimeTask: TDateTimeField;
-    dbSettingDayMonthTask: TSmallintField;
-    dbSettingOnTask: TSmallintField;
-    dbSettingSelDay: TWideStringField;
-    dbSettingSelMonth: TWideStringField;
-    dbSettingLogTask: TWideMemoField;
-    dbSettingNextStart: TDateTimeField;
-    dbSettingLastStart: TWideStringField;
-    dbSettingNamtTaskV: TStringField;
-    dbSettingOnTaskV: TStringField;
-    dbSettingNextStartStr: TWideStringField;
-    dbSettingKeyStr: TAutoIncField;
-    dbSettingID: TWideStringField;
-    dbFindTask: TADOQuery;
-    dbFindTaskID: TWideStringField;
-    dbFindTaskNameTask: TWideStringField;
-    dbFindTaskNextStart: TDateTimeField;
-    clearStack: TADOCommand;
-    existStack: TADOQuery;
-    dbFindStack: TADOQuery;
-    qStartTask: TADOQuery;
-    delExecStack: TADOCommand;
-    dbStack: TADOQuery;
-    dbStackKeyStr: TAutoIncField;
-    dbStackID: TWideStringField;
-    dbStackNameTask: TWideStringField;
-    dbStackStartTime: TDateTimeField;
-    addExecTask: TADOCommand;
     TimerStack: TTimer;
-    setExecStack: TADOCommand;
     ImageList: TImageList;
     popStack: TPopupMenu;
     popDelStack: TMenuItem;
-    qStartTaskKeyStr: TAutoIncField;
-    qStartTaskID: TWideStringField;
-    qStartTaskNameTask: TWideStringField;
-    qStartTaskFromZip: TWideStringField;
-    qStartTaskToZip: TWideStringField;
-    qStartTaskPrefixName: TWideStringField;
-    qStartTaskFormatZip: TSmallintField;
-    qStartTaskCompressZip: TSmallintField;
-    qStartTaskCryptZip: TSmallintField;
-    qStartTaskCryptWord: TWideStringField;
-    qStartTaskCryptFileName: TSmallintField;
-    qStartTaskTipTask: TSmallintField;
-    qStartTaskTimeTask: TDateTimeField;
-    qStartTaskDayMonthTask: TSmallintField;
-    qStartTaskOnTask: TSmallintField;
-    qStartTaskSelDay: TWideStringField;
-    qStartTaskSelMonth: TWideStringField;
-    qStartTaskLogTask: TWideMemoField;
-    qStartTaskNextStart: TDateTimeField;
-    qStartTaskLastStart: TWideStringField;
-    qStartTaskNextStartStr: TWideStringField;
-    setOnTask: TADOCommand;
-    dbStackonExec: TSmallintField;
-    dbStackOnExecV: TStringField;
-    existStackKeyStr: TAutoIncField;
-    existStackID: TWideStringField;
-    existStackNameTask: TWideStringField;
-    existStackStartTime: TDateTimeField;
-    existStackonExec: TSmallintField;
-    dbFindStackID: TWideStringField;
-    dbFindStackNameTask: TWideStringField;
-    dbFindStackStartTime: TDateTimeField;
-    dbFindStackonExec: TSmallintField;
-    setLastStartTask: TADOCommand;
-    dbSettingkolCopy: TSmallintField;
-    qStartTaskkolCopy: TSmallintField;
-    qCurrTask: TADOQuery;
-    qCurrTaskKeyStr: TAutoIncField;
-    qCurrTaskID: TWideStringField;
-    qCurrTaskNameTask: TWideStringField;
-    qCurrTaskFromZip: TWideStringField;
-    qCurrTaskToZip: TWideStringField;
-    qCurrTaskPrefixName: TWideStringField;
-    qCurrTaskFormatZip: TSmallintField;
-    qCurrTaskCompressZip: TSmallintField;
-    qCurrTaskCryptZip: TSmallintField;
-    qCurrTaskCryptWord: TWideStringField;
-    qCurrTaskCryptFileName: TSmallintField;
-    qCurrTaskTipTask: TSmallintField;
-    qCurrTaskTimeTask: TDateTimeField;
-    qCurrTaskDayMonthTask: TSmallintField;
-    qCurrTaskOnTask: TSmallintField;
-    qCurrTaskSelDay: TWideStringField;
-    qCurrTaskSelMonth: TWideStringField;
-    qCurrTaskLogTask: TWideMemoField;
-    qCurrTaskNextStart: TDateTimeField;
-    qCurrTaskLastStart: TWideStringField;
-    qCurrTaskNextStartStr: TWideStringField;
-    qCurrTaskkolCopy: TSmallintField;
-    upLogTask: TADOCommand;
     tmpMemo: TMemo;
     procedure popRestoreClick(Sender: TObject);
     procedure AppEventsMinimize(Sender: TObject);
@@ -160,23 +57,24 @@ type
                           DayMonthTask:word
                           ):TDateTime;
 
-    procedure SaveSetting(NameTask:string;
-                       FromZip:string;
-                       ToZip:string;
-                       PrefixName:string;
-                       FormatZip:integer;
-                       CompressZip:integer;
-                       CryptZip:integer;
-                       CryptWord:string;
-                       CryptFileName:integer;
-                       TipTask:integer;
-                       TimeTask:TDatetime;
-                       DayMonthTask:word;
-                       OnTask:integer;
-                       SelDay:string;
-                       SelMonth:string;
-                       modeEdit:integer;
-                       kolCopy:integer);
+    procedure SaveSetting(ID:string;
+                           NameTask:string;
+                           FromZip:string;
+                           ToZip:string;
+                           PrefixName:string;
+                           FormatZip:integer;
+                           CompressZip:integer;
+                           CryptZip:integer;
+                           CryptWord:string;
+                           CryptFileName:integer;
+                           TipTask:integer;
+                           TimeTask:TDatetime;
+                           DayMonthTask:word;
+                           OnTask:integer;
+                           SelDay:string;
+                           SelMonth:string;
+                           modeEdit:integer;
+                           kolCopy:integer);
 
     function ExistRecStack():boolean;
 
@@ -187,25 +85,24 @@ type
     procedure popOnClick(Sender: TObject);
     procedure popOffClick(Sender: TObject);
     procedure popEditClick(Sender: TObject);
-    procedure dbSettingCalcFields(DataSet: TDataSet);
     procedure TimerTaskTimer(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure TimerStackTimer(Sender: TObject);
     procedure popStackPopup(Sender: TObject);
-    procedure dbStackCalcFields(DataSet: TDataSet);
-    procedure dbSettingAfterScroll(DataSet: TDataSet);
     procedure pgTaskChange(Sender: TObject);
 
 
   private
     FexecIDTask: string;
+    FpathExe: string;
     procedure SetexecIDTask(const Value: string);
+    procedure SetpathExe(const Value: string);
     { Private declarations }
 
   public
     { Public declarations }
     property execIDTask: string read FexecIDTask write SetexecIDTask;
-
+    property pathExe:string read FpathExe write SetpathExe;
 
   end;
 
@@ -215,7 +112,7 @@ var
 implementation
 
 uses
-  SetTask, sevenzip;
+  SetTask, sevenzip, unitDM;
 
 {$R *.dfm}
 
@@ -224,6 +121,11 @@ begin
   FexecIDTask := Value;
 end;
 
+
+procedure TfrmMain.SetpathExe(const Value: string);
+begin
+  FpathExe := Value;
+end;
 
 //-----------------------------------------------
 
@@ -237,24 +139,25 @@ procedure TfrmMain.popEditClick(Sender: TObject);
 begin
   // настраиваем редактирование
   frmSetTask.modeEdit := 'EDIT';
-  frmSetTask.initEDIT(dbSettingNameTask.AsString,
-                      dbSettingFromZip.AsString,
-                      dbSettingToZip.AsString,
-                      dbSettingPrefixName.AsString,
+  frmSetTask.initEDIT(DM.dbSettingID.AsString,
+                      DM.dbSettingNameTask.AsString,
+                      DM.dbSettingFromZip.AsString,
+                      DM.dbSettingToZip.AsString,
+                      DM.dbSettingPrefixName.AsString,
 
-                      dbSettingFormatZip.AsInteger,
-                      dbSettingCompressZip.AsInteger,
-                      dbSettingCryptZip.AsInteger,
-                      dbSettingCryptWord.AsString,
-                      dbSettingCryptFileName.AsInteger,
+                      DM.dbSettingFormatZip.AsInteger,
+                      DM.dbSettingCompressZip.AsInteger,
+                      DM.dbSettingCryptZip.AsInteger,
+                      DM.dbSettingCryptWord.AsString,
+                      DM.dbSettingCryptFileName.AsInteger,
 
-                      dbSettingTipTask.AsInteger,
-                      dbSettingTimeTask.AsDateTime,
-                      dbSettingDayMonthTask.AsInteger,
-                      dbSettingOnTask.AsInteger,
-                      dbSettingSelDay.AsString,
-                      dbSettingSelMonth.AsString,
-                      dbSettingKolCopy.AsInteger    )  ;
+                      DM.dbSettingTipTask.AsInteger,
+                      DM.dbSettingTimeTask.AsDateTime,
+                      DM.dbSettingDayMonthTask.AsInteger,
+                      DM.dbSettingOnTask.AsInteger,
+                      DM.dbSettingSelDay.AsString,
+                      DM.dbSettingSelMonth.AsString,
+                      DM.dbSettingKolCopy.AsInteger    )  ;
 
   frmSetTask.ShowModal ;
 
@@ -299,42 +202,12 @@ begin
 
 end;
 
-procedure TfrmMain.dbSettingAfterScroll(DataSet: TDataSet);
-var
-  logName, pathLog:string;
-begin
-  //выводим лог в мемо после движения по записям
-  memLog.Lines.Clear;
-
-  pathLog := ExtractFilePath(Application.ExeName) + '\Logs';
-  logName :=  pathLog +'\' + dbSettingPrefixName.AsString + '.log';
-  if DirectoryExists(PathLog) and FileExists(logName) then
-    memLog.Lines.LoadFromFile(logName);
-
-
-end;
-
-procedure TfrmMain.dbSettingCalcFields(DataSet: TDataSet);
-begin
-  // готовим вычисляемые поля
-  dbSettingOnTaskv.AsString := ifthen(dbSettingOnTask.AsInteger = 1, 'V', ' ')  ;
-end;
-
-
-procedure TfrmMain.dbStackCalcFields(DataSet: TDataSet);
-begin
-  if dbStackOnExec.AsInteger=0 then
-    dbStackOnExecV.AsString := 'Выполняется'
-  else
-    dbStackOnExecV.AsString := 'В очереди...';
-end;
-
 function TfrmMain.ExistRecStack():boolean;
 begin
    //проверяем наличие задач в стеке
-   if existStack.Active then existStack.Close;
-   existStack.Open;
-   if existStack.RecordCount>0 then
+   if DM.existStack.Active then DM.existStack.Close;
+   DM.existStack.Open;
+   if DM.existStack.RecordCount>0 then
      Result := true
    else
      Result := false;
@@ -346,7 +219,7 @@ begin
   memLog.Clear;
   if pgTask.ActivePageIndex=0 then
   begin
-    dbSetting.AfterScroll(dbSetting);
+    DM.dbSetting.AfterScroll(DM.dbSetting);
   end;
 
 
@@ -366,24 +239,28 @@ begin
 
   if MessageDlg('Удалить задачу?' ,mtWarning, [mbYes, mbNo], 0) = mrYes then
     begin
-      dbSetting.Delete;
+      DM.dbSetting.Delete;
     end;
 
 end;
 
 procedure TfrmMain.popOffClick(Sender: TObject);
 begin
-  dbSetting.Edit;
-  dbSetting.FieldByName('OnTask').AsInteger := 0;
-  dbSetting.Post;
+    //выключаем задачу
+    DM.setOnTask.Parameters.ParamByName('ID').Value := DM.dbSettingID.AsString;
+    DM.setOnTask.Parameters.ParamByName('OnTask').Value := 0;
+    DM.setOnTask.Execute;
+    DM.dbSetting.Requery();
 
 end;
 
 procedure TfrmMain.popOnClick(Sender: TObject);
 begin
-  dbSetting.Edit;
-  dbSetting.FieldByName('OnTask').AsInteger := 1;
-  dbSetting.Post;
+    //выключаем задачу
+    DM.setOnTask.Parameters.ParamByName('ID').Value := DM.dbSettingID.AsString;
+    DM.setOnTask.Parameters.ParamByName('OnTask').Value := 1;
+    DM.setOnTask.Execute;
+    DM.dbSetting.Requery();
 
 end;
 
@@ -399,13 +276,13 @@ end;
 procedure TfrmMain.popStackPopup(Sender: TObject);
 begin
   //настраиваем popTask
-  if (dbStack.Eof) then
+  if (DM.dbStack.Eof) then
   begin
     popDelStack.Enabled := false;
    end
   else
   begin
-    if dbStackOnExec.AsInteger = 0 then
+    if DM.dbStackOnExec.AsInteger = 0 then
       popDelStack.Enabled := false
     else
       popDelStack.Enabled := true;
@@ -416,7 +293,7 @@ end;
 procedure TfrmMain.popTaskPopup(Sender: TObject);
 begin
   //настраиваем popTask
-  if (dbSetting.Eof) then
+  if (DM.dbSetting.Eof) then
   begin
     popAdd.Enabled := True;
     popEdit.Enabled := false;
@@ -434,7 +311,7 @@ begin
   end;
 
 
-  if dbSettingOnTask.AsInteger = 1 then
+  if DM.dbSettingOnTask.AsInteger = 1 then
   begin
     popOn.Visible := False;
     popOff.Visible := true;
@@ -447,7 +324,7 @@ begin
 
 end;
 
-procedure TfrmMain.SaveSetting(NameTask, FromZip, ToZip, PrefixName: string;
+procedure TfrmMain.SaveSetting(ID, NameTask, FromZip, ToZip, PrefixName: string;
   FormatZip, CompressZip, CryptZip: integer; CryptWord: string; CryptFileName,
   TipTask: integer; TimeTask: TDatetime; DayMonthTask: Word; OnTask: integer; SelDay,
   SelMonth: string; modeEdit:integer; KolCopy:integer);
@@ -456,37 +333,68 @@ var
 begin
   // Сохраняем даныные
   if modeEdit=0 then
-    dbSetting.Append
+  begin
+    //выключаем задачу
+    DM.addTask.Parameters.ParamByName('ID').Value := ID;
+    DM.addTask.Parameters.ParamByName('NameTask').Value := NameTask;
+    DM.addTask.Parameters.ParamByName('FromZip').Value := FromZip;
+    DM.addTask.Parameters.ParamByName('ToZip').Value := ToZip;
+    DM.addTask.Parameters.ParamByName('PrefixName').Value := PrefixName;
+
+    DM.addTask.Parameters.ParamByName('FormatZip').Value := FormatZip;
+    DM.addTask.Parameters.ParamByName('CompressZip').Value := CompressZip;
+    DM.addTask.Parameters.ParamByName('CryptZip').Value := CryptZip;
+    DM.addTask.Parameters.ParamByName('CryptWord').Value := CryptWord;
+    DM.addTask.Parameters.ParamByName('CryptFileName').Value := CryptFileName;
+
+    DM.addTask.Parameters.ParamByName('TipTask').Value := TipTask;
+    DM.addTask.Parameters.ParamByName('TimeTask').Value := TimeTask;
+    DM.addTask.Parameters.ParamByName('DayMonthTask').Value := DayMonthTask;
+    DM.addTask.Parameters.ParamByName('OnTask').Value := OnTask;
+    DM.addTask.Parameters.ParamByName('SelDay').Value := SelDay;
+    DM.addTask.Parameters.ParamByName('SelMonth').Value := SelMonth;
+    DM.addTask.Parameters.ParamByName('LogTask').Value := '';
+
+    tmpDT := FindNextStart(TipTask, TimeTask, SelDay, SelMonth, DayMonthTask)  ;
+
+    DM.addTask.Parameters.ParamByName('NextStart').Value := tmpDT;
+    DM.addTask.Parameters.ParamByName('NextStartStr').Value := DateTimeToStr(tmpDT);
+    DM.addTask.Parameters.ParamByName('LastStart').Value := 'Никогда' ;
+    DM.addTask.Parameters.ParamByName('KolCopy').Value := KolCopy;
+    DM.addTask.Execute;
+    DM.dbSetting.Requery();
+  end
   else
-    dbSetting.Edit;
-  dbSetting.FieldByName('ID').AsString := DateTimeToStr(Now());
-  dbSetting.FieldByName('NameTask').AsString := NameTask;
-  dbSetting.FieldByName('FromZip').AsString := FromZip;
-  dbSetting.FieldByName('ToZip').AsString := ToZip;
-  dbSetting.FieldByName('PrefixName').AsString := PrefixName;
+  begin
+    DM.upTask.Parameters.ParamByName('ID').Value := ID;
+    DM.upTask.Parameters.ParamByName('NameTask').Value := NameTask;
+    DM.upTask.Parameters.ParamByName('FromZip').Value := FromZip;
+    DM.upTask.Parameters.ParamByName('ToZip').Value := ToZip;
+    DM.upTask.Parameters.ParamByName('PrefixName').Value := PrefixName;
 
-  dbSetting.FieldByName('FormatZip').AsInteger := FormatZip;
-  dbSetting.FieldByName('CompressZip').AsInteger := CompressZip;
-  dbSetting.FieldByName('CryptZip').AsInteger := CryptZip;
-  dbSetting.FieldByName('CryptWord').AsString := CryptWord;
-  dbSetting.FieldByName('CryptFileName').AsInteger := CryptFileName;
+    DM.upTask.Parameters.ParamByName('FormatZip').Value := FormatZip;
+    DM.upTask.Parameters.ParamByName('CompressZip').Value := CompressZip;
+    DM.upTask.Parameters.ParamByName('CryptZip').Value := CryptZip;
+    DM.upTask.Parameters.ParamByName('CryptWord').Value := CryptWord;
+    DM.upTask.Parameters.ParamByName('CryptFileName').Value := CryptFileName;
 
-  dbSetting.FieldByName('TipTask').AsInteger := TipTask;
-  dbSetting.FieldByName('TimeTask').AsDateTime := TimeTask;
-  dbSetting.FieldByName('DayMonthTask').AsLargeInt := DayMonthTask;
-  dbSetting.FieldByName('OnTask').AsInteger := OnTask;
-  dbSetting.FieldByName('SelDay').AsString := SelDay;
-  dbSetting.FieldByName('SelMonth').AsString := SelMonth;
+    DM.upTask.Parameters.ParamByName('TipTask').Value := TipTask;
+    DM.upTask.Parameters.ParamByName('TimeTask').Value := TimeTask;
+    DM.upTask.Parameters.ParamByName('DayMonthTask').Value := DayMonthTask;
+    DM.upTask.Parameters.ParamByName('OnTask').Value := OnTask;
+    DM.upTask.Parameters.ParamByName('SelDay').Value := SelDay;
+    DM.upTask.Parameters.ParamByName('SelMonth').Value := SelMonth;
+    DM.upTask.Parameters.ParamByName('LogTask').Value := '';
 
-  tmpDT := FindNextStart(TipTask, TimeTask, SelDay, SelMonth, DayMonthTask)  ;
+    tmpDT := FindNextStart(TipTask, TimeTask, SelDay, SelMonth, DayMonthTask)  ;
 
-  dbSetting.FieldByName('NextStart').AsDateTime := tmpDT; //!!!!!!!!!!!!!
-  dbSetting.FieldByName('NextStartStr').AsString := DateTimeToStr(tmpDT);
-  if modeEdit=0 then
-    dbSetting.FieldByName('LastStart').AsString := 'Никогда' ;
-  dbSetting.FieldByName('KolCopy').AsInteger := KolCopy;
-
-  dbSetting.Post;
+    DM.upTask.Parameters.ParamByName('NextStart').Value := tmpDT;
+    DM.upTask.Parameters.ParamByName('NextStartStr').Value := DateTimeToStr(tmpDT);
+    DM.upTask.Parameters.ParamByName('LastStart').Value := tmpDT ;
+    DM.upTask.Parameters.ParamByName('KolCopy').Value := KolCopy;
+    DM.upTask.Execute;
+    DM.dbSetting.Requery();
+  end;
 end;
 
 
@@ -499,35 +407,35 @@ var
   begin
 
   // Запуск задачи
-  if qStartTask.Active then qStartTask.Close;
-  qStartTask.Prepared;
-  qStartTask.Parameters.ParamByName('ID').Value := ID;
-  qStartTask.Open;
+  if DM.qStartTask.Active then DM.qStartTask.Close;
+  DM.qStartTask.Prepared;
+  DM.qStartTask.Parameters.ParamByName('ID').Value := ID;
+  DM.qStartTask.Open;
 
   //проверяем наличие пути
-  if not DirectoryExists(qStartTaskFromZip.AsString) then
+  if not DirectoryExists(DM.qStartTaskFromZip.AsString) then
   begin
-    LogZip(qStartTaskPrefixName.AsString, 'Задача <' + qStartTaskNameTask.AsString + '> - путь архивации не найден, задача выключена' );
+    LogZip(DM.qStartTaskPrefixName.AsString, 'Задача <' + DM.qStartTaskNameTask.AsString + '> - путь архивации не найден, задача выключена' );
 
     //выключаем задачу
-    setOnTask.Parameters.ParamByName('ID').Value := qStartTaskID.AsString;
-    setOnTask.Parameters.ParamByName('OnTask').Value := 0;
-    setOnTask.Execute;
-    dbSetting.Requery();
+    DM.setOnTask.Parameters.ParamByName('ID').Value := DM.qStartTaskID.AsString;
+    DM.setOnTask.Parameters.ParamByName('OnTask').Value := 0;
+    DM.setOnTask.Execute;
+    DM.dbSetting.Requery();
     exit;
   end;
 
 
   //указываем время запуска
-  setLastStartTask.Parameters.ParamByName('ID').Value := qStartTaskID.AsString;
-  setLastStartTask.Parameters.ParamByName('LastStart').Value := DateTimeToStr(Now());
-  setLastStartTask.Execute;
+  DM.setLastStartTask.Parameters.ParamByName('ID').Value := DM.qStartTaskID.AsString;
+  DM.setLastStartTask.Parameters.ParamByName('LastStart').Value := DateTimeToStr(Now());
+  DM.setLastStartTask.Execute;
 
 
   //логирование !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   strLog := 'Задача запущена - ' + DateTimeToStr(Now());
 
-  logZip(qStartTaskPrefixName.AsString, strLog);
+  logZip(DM.qStartTaskPrefixName.AsString, strLog);
 
 
 
@@ -547,20 +455,20 @@ end;
 procedure TfrmMain.TimerStackTimer(Sender: TObject);
 begin
   //перебираем задачи в стеке
-  dbFindStack.Requery();
-  if dbFindStack.RecordCount=0 then exit;
-  dbFindStack.First;
-  if dbFindStackOnExec.AsInteger=1 then
+  DM.dbFindStack.Requery();
+  if DM.dbFindStack.RecordCount=0 then exit;
+  DM.dbFindStack.First;
+  if DM.dbFindStackOnExec.AsInteger=1 then
   begin
-    setExecStack.Prepared;
-    setExecStack.Parameters.ParamByName('ID').Value := dbFindStackID.AsString;
-    setExecStack.Parameters.ParamByName('OnExec').Value := 0;
-    setExecStack.Execute;
-    dbStack.Requery() ;
+    DM.setExecStack.Prepared;
+    DM.setExecStack.Parameters.ParamByName('ID').Value := DM.dbFindStackID.AsString;
+    DM.setExecStack.Parameters.ParamByName('OnExec').Value := 0;
+    DM.setExecStack.Execute;
+    DM.dbStack.Requery() ;
 
     DBGrid1.Refresh;
 
-    StartTask(dbFindStackID.AsString);
+    StartTask(DM.dbFindStackID.AsString);
 
   end;
 
@@ -576,11 +484,11 @@ var
 
 begin
   //перебираем задачи попадающие в запрос для стека
-  dbFindTask.Requery();
-  if dbFindTask.RecordCount=0 then exit;
+  DM.dbFindTask.Requery();
+  if DM.dbFindTask.RecordCount=0 then exit;
 
-  dbFindTask.First;
-  while not dbFindTask.Eof do
+  DM.dbFindTask.First;
+  while not DM.dbFindTask.Eof do
   begin
     //добавляем в стек задачу
 
@@ -589,15 +497,16 @@ begin
     if flFind then
     begin
       // проверяем на повторый запуск                     !!!!!!!!!!!!!!!!!!
-      ExistStack.First;
-      while not ExistStack.Eof do
+      DM.existStack.Requery();
+      DM.ExistStack.First;
+      while not DM.ExistStack.Eof do
       begin
-        if Trim(ExistStackID.AsString) = Trim(dbFindTaskID.AsString) then
+        if Trim(DM.ExistStackID.AsString) = Trim(DM.dbFindTaskID.AsString) then
         begin
           //задача уже есть в стеке
           exit;
         end;
-        ExistStack.Next;
+        DM.ExistStack.Next;
       end;
 
     end;
@@ -605,27 +514,23 @@ begin
     //memLog.Lines.Add('добавляем задачу -' + dbFindTaskNameTask.AsString + ' - ' + DateTimeToStr(dbFindTaskNextStart.AsDateTime));
 
 
-//    if not flFind then
-//      //стек пуст первую задачу указываем как Выполняется
-//      statusStr := 0
-//    else
-      statusStr := 1;
+    statusStr := 1;
 
-    addExecTask.Prepared;
-    addExecTask.Parameters.ParamByName('ID').Value := dbFindTaskID.AsString;
+    DM.addExecTask.Prepared;
+    DM.addExecTask.Parameters.ParamByName('ID').Value := DM.dbFindTaskID.AsString;
 
-    addExecTask.Parameters.ParamByName('NameTask').Value := dbFindTaskNameTask.AsString;
+    DM.addExecTask.Parameters.ParamByName('NameTask').Value := DM.dbFindTaskNameTask.AsString;
 
-    addExecTask.Parameters.ParamByName('StartTime').Value := dbFindTaskNextStart.AsDateTime;
+    DM.addExecTask.Parameters.ParamByName('StartTime').Value := DM.dbFindTaskNextStart.AsDateTime;
 
-    addExecTask.Parameters.ParamByName('onExec').Value := statusStr ;
+    DM.addExecTask.Parameters.ParamByName('onExec').Value := statusStr ;
 
-    addExecTask.Execute;
-    dbStack.Requery() ;
+    DM.addExecTask.Execute;
+    DM.dbStack.Requery() ;
     DBGrid1.Refresh;
 
 
-    dbFindTask.Next;
+    DM.dbFindTask.Next;
   end;
 
 //  // запускаем задачу если стек был пуст
@@ -744,52 +649,42 @@ end;
 
 //создаем и настраиваем форму
 procedure TfrmMain.FormCreate(Sender: TObject);
-var
-  pathExe:string;
 begin
-  pathExe := ExtractFilePath(Application.ExeName);
-  if AdoConn.Connected then AdoConn.Close;
-
-  AdoConn.ConnectionString := 'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=' + pathExe + 'arcFold.mdb;Persist Security Info=False;';
-  AdoConn.Connected := true;
-  if not dbSetting.Active then dbSetting.Active := true;
-
-  if not dbStack.Active then dbStack.Active := true;
-  if not dbFindTask.Active then dbFindTask.Active := true;
-  if not dbFindStack.Active then dbFindStack.Active := true;
+  //сохраняем путь к запускаемому файлу
+  frmMain.pathExe := ExtractFilePath(Application.ExeName);
 
   //проверяем задачи в стеке
-  if dbStack.RecordCount>0 then
+  if DM.dbStack.RecordCount>0 then
   begin
     // есть незаконченные задания
-    if dbStack.RecordCount>0 then
+    if DM.dbStack.RecordCount>0 then
       if MessageDlg('В очереди задач есть не запущенные в прошлом сеансе. Очистить очерень задач?' ,mtWarning, [mbYes, mbNo], 0) = mrYes then
       begin
         //удаляем
-        clearStack.Execute ;
+        DM.clearStack.Execute ;
       end
       else
       begin
-        dbStack.First;
-        if dbStackOnExec.AsInteger=0 then
+        DM.dbStack.First;
+        if DM.dbStackOnExec.AsInteger=0 then
         begin
-          //переводим все задания стека в ожидание
-          setExecStack.Parameters.ParamByName('ID').Value := dbStackID.AsString;
-          setExecStack.Parameters.ParamByName('OnExec').Value := 1;
-          setExecStack.Execute;
+          //переводим задание стека в ожидание
+          DM.setExecStack.Parameters.ParamByName('ID').Value := DM.dbStackID.AsString;
+          DM.setExecStack.Parameters.ParamByName('OnExec').Value := 1;
+          DM.setExecStack.Execute;
         end;
       end;
 
 
-    dbStack.Requery();
-    dbStack.First;
+    DM.dbStack.Requery();
+    DM.dbStack.First;
 
 
   end;
 
   //включаем тамеры
-  timerTask.Enabled := true;
-  timerStack.Enabled := true;
+//  timerTask.Enabled := true;
+//  timerStack.Enabled := true;
 
 
 end;
@@ -803,8 +698,8 @@ var
   pathLog:string;
   LogName:string;
 begin
-  pathLog := ExtractFilePath(Application.ExeName) + '\Logs';
-  logName :=  pathLog +'\' + qStartTaskPrefixName.AsString + '.log';
+  pathLog := frmMain.pathExe + '\Logs';
+  logName :=  frmMain.pathExe +'\' + DM.qStartTaskPrefixName.AsString + '.log';
 
   if not DirectoryExists(pathLog) then CreateDir(pathLog);
 
@@ -837,17 +732,17 @@ begin
 
   //архивируем в отдельном потоке
   ID:= frmMain.execIDTask;
-  frmMain.qStartTask.First;
-  NameTask := frmMain.qStartTaskNameTask.AsString;
-  PrefixName := frmMain.qStartTaskPrefixName.AsString;
-  PrefixNameDT := frmMain.qStartTaskPrefixName.AsString + ReplaceStr(DateTimeToStr(Now()), ':', '.');
-  FromZip := frmMain.qStartTaskFromZip.AsString;
-  ToZip := frmMain.qStartTaskToZip.AsString;
-  CryptWord := frmMain.qStartTaskCryptWord.AsString;
-  CryptZip := frmMain.qStartTaskCryptZip.AsInteger;
-  CompressZip := frmMain.qStartTaskCompressZip.AsInteger  ;
-  KolCopy := frmMain.qStartTaskKolCopy.AsInteger  ;
-  Log := frmMain.qStartTaskLogTask.AsString;
+  DM.qStartTask.First;
+  NameTask := DM.qStartTaskNameTask.AsString;
+  PrefixName := DM.qStartTaskPrefixName.AsString;
+  PrefixNameDT := DM.qStartTaskPrefixName.AsString + ReplaceStr(DateTimeToStr(Now()), ':', '.');
+  FromZip := DM.qStartTaskFromZip.AsString;
+  ToZip := DM.qStartTaskToZip.AsString;
+  CryptWord := DM.qStartTaskCryptWord.AsString;
+  CryptZip := DM.qStartTaskCryptZip.AsInteger;
+  CompressZip := DM.qStartTaskCompressZip.AsInteger  ;
+  KolCopy := DM.qStartTaskKolCopy.AsInteger  ;
+  Log := DM.qStartTaskLogTask.AsString;
 
   Arch := CreateOutArchive(CLSID_CFormat7Z);
 
@@ -868,9 +763,9 @@ begin
   Arch.SaveToFile(ToZip+'\'+PrefixNameDT+'.zip');
 
   //после выполнения архивирования удаляем из стека задачу
-  frmMain.delExecStack.Parameters.ParamByName('ID').Value := ID;
-  frmMain.delExecStack.Execute;
-  frmMain.dbStack.Requery();
+  DM.delExecStack.Parameters.ParamByName('ID').Value := ID;
+  DM.delExecStack.Execute;
+  DM.dbStack.Requery();
 
   //логирование
   //логирование !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
