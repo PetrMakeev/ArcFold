@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.SvcMgr, Vcl.Dialogs;
 
 type
-  TService1 = class(TService)
+  TAFService = class(TService)
   private
     { Private declarations }
   public
@@ -15,7 +15,7 @@ type
   end;
 
 var
-  Service1: TService1;
+  AFService: TAFService;
 
 implementation
 
@@ -23,10 +23,10 @@ implementation
 
 procedure ServiceController(CtrlCode: DWord); stdcall;
 begin
-  Service1.Controller(CtrlCode);
+  AFService.Controller(CtrlCode);
 end;
 
-function TService1.GetServiceController: TServiceController;
+function TAFService.GetServiceController: TServiceController;
 begin
   Result := ServiceController;
 end;

@@ -4526,6 +4526,8 @@ object frmMain: TfrmMain
     ReadOnly = True
     ScrollBars = ssVertical
     TabOrder = 1
+    ExplicitTop = 199
+    ExplicitWidth = 663
   end
   object tmpMemo: TMemo
     Left = 480
@@ -4536,15 +4538,6 @@ object frmMain: TfrmMain
       'tmpMemo')
     TabOrder = 2
     Visible = False
-  end
-  object Button2: TButton
-    Left = 152
-    Top = 179
-    Width = 75
-    Height = 25
-    Caption = 'Button2'
-    TabOrder = 3
-    OnClick = Button2Click
   end
   object MainMenu1: TMainMenu
     Left = 56

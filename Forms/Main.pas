@@ -37,7 +37,6 @@ type
     popStack: TPopupMenu;
     popDelStack: TMenuItem;
     tmpMemo: TMemo;
-    Button2: TButton;
     procedure popRestoreClick(Sender: TObject);
     procedure AppEventsMinimize(Sender: TObject);
     procedure popTaskPopup(Sender: TObject);
@@ -81,7 +80,6 @@ type
     procedure pgTaskChange(Sender: TObject);
 
     procedure viewLog(PrefixName:string);
-    procedure Button2Click(Sender: TObject);
 
 
   private
@@ -160,19 +158,6 @@ begin
 end;
 
 
-
-procedure TfrmMain.Button2Click(Sender: TObject);
-begin
-    //Добавляем задачу в стек
-    DM.addExecTask.Parameters.ParamByName('ID').Value := DM.dbSettingID.AsString;
-    DM.addExecTask.Parameters.ParamByName('NameTask').Value := DM.dbSettingNameTask.AsString;
-    DM.addExecTask.Parameters.ParamByName('StartTime').Value := DM.dbSettingNextStart.AsDateTime;
-    DM.addExecTask.Parameters.ParamByName('onExec').Value := 1 ;   // статус В ожидании...
-    DM.addExecTask.Execute;
-    DM.dbStack.Requery() ;
-    DBGrid1.Refresh;
-
-end;
 
 procedure TfrmMain.ControlCopy(ToZip, FindCopy: string; kolCopy: integer);
 var
@@ -561,6 +546,9 @@ var
   flFind: boolean;
   BM: TBookmark;
 begin
+  //обновляем грид с задачами
+  DM.dbSettingRefresh;
+
   //перебираем задачи попадающие в запрос для стека
   DM.dbFindTask.Requery();
   if DM.dbFindTask.RecordCount=0 then exit;

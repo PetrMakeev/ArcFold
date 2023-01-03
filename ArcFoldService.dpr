@@ -2,7 +2,7 @@ program ArcFoldService;
 
 uses
   Vcl.SvcMgr,
-  ArcFoldSrv in 'ArcFoldSrv.pas' {Service1: TService};
+  ArcFoldSrv in 'ArcFoldSrv.pas' {AFService: TService};
 
 {$R *.RES}
 
@@ -23,6 +23,6 @@ begin
   //
   if not Application.DelayInitialize or Application.Installing then
     Application.Initialize;
-  Application.CreateForm(TService1, Service1);
+  Application.CreateForm(TAFService, AFService);
   Application.Run;
 end.
