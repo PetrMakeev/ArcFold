@@ -585,9 +585,11 @@ object DM: TDM
     CursorType = ctStatic
     Parameters = <>
     SQL.Strings = (
-      'SELECT Task.ID, Task.NameTask, Task.NextStart'
+      'SELECT '
+      'Task.ID, Task.NameTask, Task.NextStart, '
+      'TipTask, TimeTask, SelDay, SelMonth, DayMonthTask'
       'FROM Task'
-      'WHERE ( DateAdd('#39's'#39', -3, Now()) <= Task.NextStart ) and'
+      'WHERE ( DateAdd('#39's'#39', -2, Now()) <= Task.NextStart ) and'
       
         '             ( Task.NextStart <= DateAdd('#39's'#39', -1, Now() ) ) and ' +
         'Task.onTask=1')
@@ -603,6 +605,23 @@ object DM: TDM
     end
     object dbFindTaskNextStart: TDateTimeField
       FieldName = 'NextStart'
+    end
+    object dbFindTaskTipTask: TSmallintField
+      FieldName = 'TipTask'
+    end
+    object dbFindTaskTimeTask: TDateTimeField
+      FieldName = 'TimeTask'
+    end
+    object dbFindTaskSelDay: TWideStringField
+      FieldName = 'SelDay'
+      Size = 7
+    end
+    object dbFindTaskSelMonth: TWideStringField
+      FieldName = 'SelMonth'
+      Size = 12
+    end
+    object dbFindTaskDayMonthTask: TSmallintField
+      FieldName = 'DayMonthTask'
     end
   end
   object qStartTask: TADOQuery

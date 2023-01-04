@@ -158,7 +158,7 @@ begin
 end;
 
 
-
+// Контроль копий по указанной маске и количеству копий
 procedure TfrmMain.ControlCopy(ToZip, FindCopy: string; kolCopy: integer);
 var
   SearchRec: TSearchRec; // информация о файле или каталоге
@@ -186,6 +186,7 @@ begin
 
 end;
 
+// проверка стека
 function TfrmMain.ExistRecStack():boolean;
 begin
    //проверяем наличие задач в стеке
@@ -312,6 +313,8 @@ begin
 
 end;
 
+
+/// сохраняем настройки задачи
 procedure TfrmMain.SaveSetting(ID, NameTask, FromZip, ToZip, PrefixName: string;
   FormatZip, CompressZip, CryptZip: integer; CryptWord: string; CryptFileName,
   TipTask: integer; TimeTask: TDatetime; DayMonthTask: Word; OnTask: integer; SelDay,
@@ -388,7 +391,7 @@ end;
 
 
 
-// Запуск задачи
+// Запуск задачи - архивирование
 procedure TfrmMain.StartTask(ID:string);
 var
   NameTask, PrefixName, PrefixNameDT, FromZip, ToZip, CryptWord, Log, SelDay, SelMonth: string ;
@@ -486,22 +489,24 @@ begin
          DM.pathExe + 'Logs\' + DM.qStartTaskPrefixName.AsString + '.log',
          strLog);
 
-
+  // Контроль количества копий
   frmMain.ControlCopy(ToZip, ToZip + '\' + PrefixName + '*.zip', kolCopy);
 
-  //после выполнения задачи определяем следующий старт задачи
-  NextStart := FindNextStart( TipTask,
-                              TimeTask,
-                              SelDay,
-                              SelMonth,
-                              DayMonthTask);
+//  //после выполнения задачи определяем следующий старт задачи
+//  NextStart := FindNextStart( TipTask,
+//                              TimeTask,
+//                              SelDay,
+//                              SelMonth,
+//                              DayMonthTask);
+//
+//  DM.setNextStartTask.Parameters.ParamByName('ID').Value := ID;
+//  DM.setNextStartTask.Parameters.ParamByName('NextStart').Value := NextStart;
+//  DM.setNextStartTask.Parameters.ParamByName('NextStartStr').Value := DateTimeToStr(NextStart);
+//  DM.setNextStartTask.execute;
 
-  DM.setNextStartTask.Parameters.ParamByName('ID').Value := ID;
-  DM.setNextStartTask.Parameters.ParamByName('NextStart').Value := NextStart;
-  DM.setNextStartTask.Parameters.ParamByName('NextStartStr').Value := DateTimeToStr(NextStart);
-  DM.setNextStartTask.execute;
+  //обновляем грид планировщика
   DM.dbSettingRefresh();
-  //DM.dbSetting.Requery();
+
 
   //после выполнения архивирования удаляем из стека задачу
   DM.delExecStack.Parameters.ParamByName('ID').Value := ID;
@@ -515,7 +520,7 @@ end;
 
 
 
-// обрабатываем таймер задачи, ищем задачи на выполнение и отправляем в стек
+// обрабатываем таймер очереди задач, запускаем задачи в стеке поочередно
 procedure TfrmMain.TimerStackTimer(Sender: TObject);
 begin
   //перебираем задачи в стеке
@@ -540,11 +545,14 @@ begin
 
 end;
 
+
+/// обрабатываем таймер планировщика задач, ищем задачи на выполнение и отправляем в стек
 procedure TfrmMain.TimerTaskTimer(Sender: TObject);
 var
   recNo:integer;
   flFind: boolean;
   BM: TBookmark;
+  NextStart: TDateTime;
 begin
   //обновляем грид с задачами
   DM.dbSettingRefresh;
@@ -587,6 +595,22 @@ begin
     DM.dbStack.Requery() ;
 
     DM.dbFindTask.Next;
+
+    //пересчитываем следующий запуск
+
+    //после выполнения задачи определяем следующий старт задачи
+    NextStart := FindNextStart( DM.dbFindTaskTipTask.asInteger,
+                                DM.dbFindTaskTimeTask.asDateTime,
+                                DM.dbFindTaskSelDay.asString,
+                                DM.dbFindTaskSelMonth.asString,
+                                DM.dbFindTaskDayMonthTask.asInteger);
+
+    DM.setNextStartTask.Parameters.ParamByName('ID').Value := DM.dbFindTaskID.AsString;
+    DM.setNextStartTask.Parameters.ParamByName('NextStart').Value := NextStart;
+    DM.setNextStartTask.Parameters.ParamByName('NextStartStr').Value := DateTimeToStr(NextStart);
+    DM.setNextStartTask.execute;
+    DM.dbSettingRefresh();
+
   end;
 
 end;

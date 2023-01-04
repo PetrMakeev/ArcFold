@@ -96,6 +96,11 @@ type
     qTaskSelDay: TWideStringField;
     qTaskSelMonth: TWideStringField;
     qTaskID: TWideStringField;
+    dbFindTaskTipTask: TSmallintField;
+    dbFindTaskTimeTask: TDateTimeField;
+    dbFindTaskSelDay: TWideStringField;
+    dbFindTaskSelMonth: TWideStringField;
+    dbFindTaskDayMonthTask: TSmallintField;
     procedure dbSettingCalcFields(DataSet: TDataSet);
     procedure DataModuleCreate(Sender: TObject);
     procedure dbStackCalcFields(DataSet: TDataSet);
