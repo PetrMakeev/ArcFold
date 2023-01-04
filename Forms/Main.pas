@@ -523,24 +523,25 @@ end;
 // обрабатываем таймер очереди задач, запускаем задачи в стеке поочередно
 procedure TfrmMain.TimerStackTimer(Sender: TObject);
 begin
-  //перебираем задачи в стеке
-  DM.dbFindStack.Requery();
-  if DM.dbFindStack.RecordCount=0 then exit;
-  DM.dbFindStack.First;
-  if DM.dbFindStackOnExec.AsInteger=1 then
-  begin
-    //DM.setExecStack.Prepared;
-    DM.setExecStack.Parameters.ParamByName('ID').Value := DM.dbFindStackID.AsString;
-    DM.setExecStack.Parameters.ParamByName('OnExec').Value := 0;
-    DM.setExecStack.Execute;
+//  //перебираем задачи в стеке
+//  DM.dbFindStack.Requery();
+//  if DM.dbFindStack.RecordCount=0 then exit;
+//  DM.dbFindStack.First;
+//  if DM.dbFindStackOnExec.AsInteger=1 then
+//  begin
+//    //DM.setExecStack.Prepared;
+//    DM.setExecStack.Parameters.ParamByName('ID').Value := DM.dbFindStackID.AsString;
+//    DM.setExecStack.Parameters.ParamByName('OnExec').Value := 0;
+//    DM.setExecStack.Execute;
+//    DM.dbStack.Requery() ;
+//
+//    DBGrid1.Refresh;
+//
+//    StartTask(DM.dbFindStackID.AsString);
+//
+//  end;
+
     DM.dbStack.Requery() ;
-
-    DBGrid1.Refresh;
-
-    StartTask(DM.dbFindStackID.AsString);
-
-  end;
-
 
 
 end;
@@ -633,8 +634,8 @@ procedure TfrmMain.FormCreate(Sender: TObject);
 begin
 
 
-  //включаем тамеры
-  timerTask.Enabled := true;
+  //включаем таймеры
+  //timerTask.Enabled := true;
   timerStack.Enabled := true;
 
   // отмечаем создание формы в DM

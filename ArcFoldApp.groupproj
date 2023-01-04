@@ -6,6 +6,9 @@
         <Projects Include="ArcFold.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="ArcFoldAgent.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -23,14 +26,23 @@
     <Target Name="ArcFold:Make">
         <MSBuild Projects="ArcFold.dproj" Targets="Make"/>
     </Target>
+    <Target Name="ArcFoldAgent">
+        <MSBuild Projects="ArcFoldAgent.dproj"/>
+    </Target>
+    <Target Name="ArcFoldAgent:Clean">
+        <MSBuild Projects="ArcFoldAgent.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ArcFoldAgent:Make">
+        <MSBuild Projects="ArcFoldAgent.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="ArcFold"/>
+        <CallTarget Targets="ArcFold;ArcFoldAgent"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="ArcFold:Clean"/>
+        <CallTarget Targets="ArcFold:Clean;ArcFoldAgent:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="ArcFold:Make"/>
+        <CallTarget Targets="ArcFold:Make;ArcFoldAgent:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

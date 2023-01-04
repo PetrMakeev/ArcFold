@@ -4,9 +4,9 @@ uses
   Forms,
   Main in 'Forms\Main.pas' {frmMain},
   SetTask in 'Forms\SetTask.pas' {frmSetTask},
-  sevenzip in 'sevenzip.pas',
-  unitDM in 'unitDM.pas' {DM: TDataModule},
-  Func in 'Func.pas';
+  sevenzip in 'Forms\sevenzip.pas',
+  unitDM in 'Forms\unitDM.pas' {DMA: TDataModule},
+  Func in 'Forms\Func.pas';
 
 {$R *.res}
 
