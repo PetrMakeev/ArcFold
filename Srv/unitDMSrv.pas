@@ -1,4 +1,4 @@
-unit unitDMAgent;
+unit unitDMSrv;
 
 interface
 
@@ -7,9 +7,11 @@ uses
   system.StrUtils;
 
 type
-  TDMA = class(TDataModule)
+  TDMS = class(TDataModule)
     ADOConn: TADOConnection;
     setOnTask: TADOCommand;
+    addTask: TADOCommand;
+    upTask: TADOCommand;
     setLastStartTask: TADOCommand;
     dbFindTask: TADOQuery;
     dbFindTaskID: TWideStringField;
@@ -68,6 +70,7 @@ type
     dbFindTaskDayMonthTask: TSmallintField;
     procedure DataModuleCreate(Sender: TObject);
 
+
   private
     FpathExe: string;
     FstartMain: boolean;
@@ -83,18 +86,18 @@ type
   end;
 
 var
-  DMA: TDMA;
+  DMS: TDMS;
 
 implementation
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
 uses
-  Agent, Func;
+  ArcFoldSrv, Func;
 
 {$R *.dfm}
 
-procedure TDMA.DataModuleCreate(Sender: TObject);
+procedure TDMS.DataModuleCreate(Sender: TObject);
 var
   NextStart:TDateTime;
   TipTask: integer;
@@ -104,55 +107,28 @@ var
 
 begin
 
-  DMA.startMain := false;
+  DMS.startMain := false;
 
-  DMA.pathExe := ExtractFilePath(Application.ExeName);
+  DMS.pathExe := ExtractFilePath(Application.ExeName);
 
   if AdoConn.Connected then  AdoConn.Close;
 
   ADOConn.ConnectionString := 'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=' + pathExe + 'arcFold.mdb;Persist Security Info=False;';
   ADOConn.Connected := true;
 
-  if not dbFindTask.Active then dbFindTask.Active := true;
-
-
-  // пересчитываем время запуска задач в планировщике
-  if qTask.Active then qTask.Close;
-  qTask.Open;
-  while not qTask.Eof do
-  begin
-    TipTask := qTaskTipTask.asInteger;
-    TimeTask := qTaskTimeTask.asDatetime;
-    SelDay := qTaskSelDay.asString;
-    SelMonth := qTaskSelMonth.asString;
-    DayMonthTask := qTaskDayMonthTask.asInteger;
-
-    NextStart := FindNextStart( TipTask,
-                                TimeTask,
-                                SelDay,
-                                SelMonth,
-                                DayMonthTask);
-
-    setNextStartTask.Parameters.ParamByName('ID').Value := qTaskID.asString;
-    setNextStartTask.Parameters.ParamByName('NextStart').Value := NextStart;
-    setNextStartTask.Parameters.ParamByName('NextStartStr').Value := DateTimeToStr(NextStart);
-    setNextStartTask.execute;
-    qTask.Next;
-  end;
-
+  if not DMS.dbFindStack.Active then DMS.dbFindStack.Active := true;
 
 end;
-
 
 
 
 // -------------------------
-procedure TDMA.SetpathExe(const Value: string);
+procedure TDMS.SetpathExe(const Value: string);
 begin
   FpathExe := Value;
 end;
 
-procedure TDMA.SetstartMain(const Value: boolean);
+procedure TDMS.SetstartMain(const Value: boolean);
 begin
   FstartMain := Value;
 end;

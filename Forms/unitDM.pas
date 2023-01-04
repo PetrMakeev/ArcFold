@@ -108,6 +108,7 @@ type
 
     procedure dbSettingRefresh();
 
+
   private
     FpathExe: string;
     FstartMain: boolean;
@@ -221,7 +222,6 @@ begin
   else
     dbStackOnExecV.AsString := 'В очереди...';
 end;
-
 
 
 // -------------------------

@@ -735,6 +735,14 @@ object frmSetTask: TfrmSetTask
     TabOrder = 11
     Visible = False
   end
+  object txtLastStart: TEdit
+    Left = 288
+    Top = 443
+    Width = 121
+    Height = 23
+    TabOrder = 12
+    Visible = False
+  end
   object SelectFolder: TFileOpenDialog
     DefaultFolder = 'c:\'
     FavoriteLinks = <>

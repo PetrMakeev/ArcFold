@@ -1,4 +1,4 @@
-object DMA: TDMA
+object DM: TDM
   OnCreate = DataModuleCreate
   Height = 480
   Width = 640
@@ -43,6 +43,417 @@ object DMA: TDMA
         Value = Null
       end>
     Left = 176
+    Top = 144
+  end
+  object addTask: TADOCommand
+    CommandText = 
+      'insert into Task '#13#10'( ID,'#13#10'  NAmeTask,'#13#10'  FromZip,'#13#10'  ToZip,'#13#10'  P' +
+      'refixName,'#13#10'  FormatZip,'#13#10'  CompressZip,'#13#10'  CryptZip,'#13#10'  CryptWo' +
+      'rd,'#13#10'  CryptFileName,'#13#10'  TipTask,'#13#10'  TimeTask,'#13#10'  DayMonthTask,'#13 +
+      #10'  OnTask,'#13#10'  SelDay,'#13#10'  SelMonth,'#13#10'  LogTask,'#13#10'  NextStart,'#13#10'  ' +
+      'LastStart,'#13#10'  NextStartStr,'#13#10'  KolCopy)'#13#10'values '#13#10'( :ID,'#13#10'  :Nam' +
+      'eTask,'#13#10'  :FromZip,'#13#10'  :ToZip,'#13#10'  :PrefixName,'#13#10'  :FormatZip,'#13#10' ' +
+      ' :CompressZip,'#13#10'  :CryptZip,'#13#10'  :CryptWord,'#13#10'  :CryptFileName,'#13#10 +
+      '  :TipTask,'#13#10'  :TimeTask,'#13#10'  :DayMonthTask,'#13#10'  :OnTask,'#13#10'  :SelD' +
+      'ay,'#13#10'  :SelMonth,'#13#10'  :LogTask,'#13#10'  :NextStart,'#13#10'  :LastStart,'#13#10'  ' +
+      ':NextStartStr,'#13#10'  :kolCopy)'
+    Connection = ADOConn
+    Parameters = <
+      item
+        Name = 'ID'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'NameTask'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'FromZip'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'ToZip'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'PrefixName'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'FormatZip'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'CompressZip'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'CryptZip'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'CryptWord'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'CryptFileName'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'TipTask'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'TimeTask'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'DayMonthTask'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'OnTask'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'SelDay'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'SelMonth'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'LogTask'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'NextStart'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'LastStart'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'NextStartStr'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'kolCopy'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end>
+    Left = 40
+    Top = 144
+  end
+  object upTask: TADOCommand
+    CommandText = 
+      'update Task set'#13#10'  NameTask = :NameTask,'#13#10'  FromZip = :FromZip,'#13 +
+      #10'  ToZip = :ToZip,'#13#10'  PrefixName =:PrefixName,'#13#10'  FormatZip = :F' +
+      'ormatZip,'#13#10'  CompressZip = :CompressZip,'#13#10'  CryptZip = :CryptZip' +
+      ','#13#10'  CryptWord = :CryptWord,'#13#10'  CryptFileName = :CryptFileName,'#13 +
+      #10'  TipTask = :TipTask,'#13#10'  TimeTask = :TimeTask,'#13#10'  DayMonthTask ' +
+      '= :DayMonthTask,'#13#10'  OnTask = :OnTask,'#13#10'  SelDay = :SelDay,'#13#10'  Se' +
+      'lMonth = :SelMonth,'#13#10'  LogTask = :LogTask,'#13#10'  NextStart = :NextS' +
+      'tart,'#13#10'  LastStart = :LastStart,'#13#10'  NextStartStr = :NextStartStr' +
+      ','#13#10'  KolCopy = :KolCopy'#13#10'where id=:id'#13#10#13#10
+    Connection = ADOConn
+    Parameters = <
+      item
+        Name = 'NameTask'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'FromZip'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'ToZip'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'PrefixName'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'FormatZip'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'CompressZip'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'CryptZip'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'CryptWord'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'CryptFileName'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'TipTask'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'TimeTask'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'DayMonthTask'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'OnTask'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'SelDay'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'SelMonth'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'LogTask'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'NextStart'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'LastStart'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'NextStartStr'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'kolCopy'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end
+      item
+        Name = 'ID'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 510
+        Value = Null
+      end>
+    Left = 104
     Top = 144
   end
   object setLastStartTask: TADOCommand

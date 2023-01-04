@@ -72,6 +72,7 @@ type
     txtKolCopy: TNumberBox;
     Label7: TLabel;
     txtID: TEdit;
+    txtLastStart: TEdit;
     procedure cmbTipTaskChange(Sender: TObject);
     procedure sbMonthAllOnClick(Sender: TObject);
     procedure sbMonthAllOffClick(Sender: TObject);
@@ -95,7 +96,8 @@ type
                        OnTask:integer;
                        SelDay:string;
                        SelMonth:string;
-                       kolCopy:integer);
+                       kolCopy:integer;
+                       LastStart:string);
 
 
     procedure btnCancelClick(Sender: TObject);
@@ -269,7 +271,8 @@ begin
                         ifthen(chbMonth11.Checked, '1', '0') +
                         ifthen(chbMonth12.Checked, '1', '0'),
                       ifthen(modeEdit='ADD', 0, 1),
-                      txtKolCopy.ValueInt
+                      txtKolCopy.ValueInt,
+                      txtLastStart.Text
                       );
   close;
 
@@ -358,7 +361,7 @@ end;
 procedure TfrmSetTask.initEDIT(ID, NameTask, FromZip, ToZip, PrefixName: string;
   FormatZip, CompressZip, CryptZip: integer; CryptWord: string; CryptFileName,
   TipTask: integer; TimeTask: TDatetime;  DayMonthTask: Word;
-  OnTask: integer; SelDay:string; SelMonth:string; KolCopy:integer);
+  OnTask: integer; SelDay:string; SelMonth:string; KolCopy:integer; LastStart:string);
 begin
   //
   // настраиваем форму по указанному режиму
@@ -418,6 +421,7 @@ begin
   chbCryptZipClick(Self);
   chbOnTask.Checked := 1 = OnTask;
   txtKolCopy.Value := kolCopy;
+  txtLastStart.Text := LastStart;
 
 end;
 

@@ -56,8 +56,7 @@ begin
       DMA.ExistStack.First;
       while not DMA.ExistStack.Eof do
       begin
-        if (Trim(DMA.ExistStackID.AsString) = Trim(DMA.dbFindTaskID.AsString)) and
-           (SecondsBetween(DMA.existStackStartTime.asDateTime, DMA.dbFindStackStartTime.asDateTime ) < 60)  then
+        if (Trim(DMA.ExistStackID.AsString) = Trim(DMA.dbFindTaskID.AsString))   then
         begin
           //задача уже есть в стеке
           exit;
@@ -74,7 +73,7 @@ begin
     DMA.addExecTask.Parameters.ParamByName('StartTime').Value := DMA.dbFindTaskNextStart.AsDateTime;
     DMA.addExecTask.Parameters.ParamByName('onExec').Value := 1 ;   // статус ¬ ожидании...
     DMA.addExecTask.Execute;
-    DMA.dbStack.Requery() ;
+
 
     DMA.dbFindTask.Next;
 
