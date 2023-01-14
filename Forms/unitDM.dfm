@@ -3,7 +3,6 @@ object DM: TDM
   Height = 480
   Width = 640
   object ADOConn: TADOConnection
-    Connected = True
     ConnectionString = 
       'Provider=Microsoft.Jet.OLEDB.4.0;User ID=Admin;Data Source=C:\Pr' +
       'ojects\ArcFold\arcFold.mdb;Mode=Share Deny None;Persist Security' +
@@ -13,7 +12,8 @@ object DM: TDM
       ';Jet OLEDB:Global Bulk Transactions=1;Jet OLEDB:New Database Pas' +
       'sword="";Jet OLEDB:Create System Database=False;Jet OLEDB:Encryp' +
       't Database=False;Jet OLEDB:Don'#39't Copy Locale on Compact=False;Je' +
-      't OLEDB:Compact Without Replica Repair=False;Jet OLEDB:SFP=False'
+      't OLEDB:Compact Without Replica Repair=False;Jet OLEDB:SFP=False' +
+      ';'
     LoginPrompt = False
     Mode = cmShareDenyNone
     Provider = 'Microsoft.Jet.OLEDB.4.0'

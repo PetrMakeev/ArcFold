@@ -137,7 +137,10 @@ begin
   if txtFromZip.Text = '' then
     SelectFolder.DefaultFolder := 'c:\'
   else
-    SelectFolder.DefaultFolder := txtFromZip.Text;
+    if DirectoryExists(txtFromZip.Text) then
+      SelectFolder.DefaultFolder := txtFromZip.Text
+    else
+      SelectFolder.DefaultFolder := 'c:\';
 
   if SelectFolder.Execute then
     txtFromZip.Text := SelectFolder.FileName;
@@ -282,10 +285,15 @@ procedure TfrmSetTask.btnToZipClick(Sender: TObject);
 begin
   //обрабатываем выбор папки
     SelectFolder.FileName := '';
-  if txtToZip.Text = '' then
+  if (txtToZip.Text = '')  then
     SelectFolder.DefaultFolder := 'c:\'
   else
-    SelectFolder.DefaultFolder := txtToZip.Text;
+  begin
+    if DirectoryExists(txtToZip.Text) then
+      SelectFolder.DefaultFolder := txtToZip.Text
+    else
+      SelectFolder.DefaultFolder := 'c:\'
+  end;
 
   if SelectFolder.Execute then
     txtToZip.Text := SelectFolder.FileName;

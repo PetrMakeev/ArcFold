@@ -78,6 +78,11 @@ type
     procedure viewLog(PrefixName:string);
 
 
+    procedure startAgent();
+    procedure popDelStackClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+
+
   private
     FexecIDTask: string;
     procedure SetexecIDTask(const Value: string);
@@ -95,7 +100,7 @@ var
 implementation
 
 uses
-  SetTask, sevenzip, Func, unitDM;
+  SetTask, sevenzip, Func, unitDM, SetSrv, TLHelp32;
 
 {$R *.dfm}
 
@@ -105,7 +110,50 @@ begin
 end;
 
 
+//-------------------------------------------------
 
+procedure TfrmMain.startAgent;
+var
+  startStr:string;
+begin
+  // запускаем службы
+  startStr := 'schtasks /run /tn ArcFoldAgentStartUp '
+              ;
+
+  WinExec('schtasks /run /tn ArcFoldServiceCheck', SW_SHOW);
+
+
+end;
+
+
+function CloseByExeName(ExeFilename: String): Integer;
+var
+  continueloop: Boolean;
+  fsnapshothandle: THandle;
+  fprocessentry32: TProcessEntry32;
+const
+  //константа для команды завершения процесса
+  process_terminate=$0001;
+begin
+  Result := 0;
+  //переводим имя файла в верхний регистр для сравнения
+  ExeFilename := uppercase(ExeFilename);
+  //получаем снимок работабщих в системе процессов
+  fsnapshothandle := createtoolhelp32snapshot(th32cs_snapprocess,0);
+  fprocessentry32.dwsize := sizeof(fprocessentry32);
+  continueloop := process32first(fsnapshothandle,fprocessentry32);
+  //перебираем процессы
+  while integer(continueloop)<>0 do
+  begin
+    //если имя файла совпадает с искомым, то пробуем его завершить
+    if ( ( uppercase( extractfilename( fprocessentry32.szexefile ) ) = ExeFilename ) OR
+         ( uppercase( fprocessentry32.szexefile ) = ExeFilename) ) then
+      Result := integer( terminateprocess( openprocess( process_terminate, bool(0), fprocessentry32.th32processid ), 0) );
+    //берем следующий процесс
+    continueloop := process32next(fsnapshothandle,fprocessentry32);
+  end;
+  closehandle(fsnapshothandle);
+end;
 
 //-----------------------------------------------
 
@@ -156,6 +204,13 @@ end;
 
 
 
+
+
+procedure TfrmMain.Button1Click(Sender: TObject);
+begin
+
+end;
+
 // проверка стека
 procedure TfrmMain.pgTaskChange(Sender: TObject);
 begin
@@ -184,6 +239,24 @@ begin
     begin
       DM.dbSetting.Delete;
     end;
+
+end;
+
+procedure TfrmMain.popDelStackClick(Sender: TObject);
+begin
+  // удаляем задачу или прерываем задачу
+  //выключаем задачу
+   if DM.dbStackOnExec.AsInteger = 0 then
+   begin
+     CloseByExeName('ArcFoldService.exe');
+     WinExec('schtasks /run /tn ArcFoldServiceCheck', SW_SHOW);
+   end;
+
+
+   DM.delExecStack.Parameters.ParamByName('ID').Value := DM.dbStackID.AsString;
+   DM.delExecStack.Execute;
+   DM.dbStack.Requery();
+
 
 end;
 
@@ -230,9 +303,15 @@ begin
   else
   begin
     if DM.dbStackOnExec.AsInteger = 0 then
-      popDelStack.Enabled := false
-    else
+    begin
       popDelStack.Enabled := true;
+      popDelStack.Caption := 'Удалить из очереди';
+    end
+    else
+    begin
+      popDelStack.Enabled := true;
+      popDelStack.Caption := 'Прервать выполнение';
+    end;
   end;
 
 end;
@@ -376,10 +455,10 @@ end;
 
 
 
+
 //создаем и настраиваем форму
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
-
 
   //включаем таймеры
   timerTask.Enabled := true;

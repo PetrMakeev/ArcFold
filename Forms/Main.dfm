@@ -4519,18 +4519,18 @@ object frmMain: TfrmMain
   end
   object memLog: TMemo
     Left = 0
-    Top = 200
+    Top = 202
     Width = 667
-    Height = 146
+    Height = 144
     Align = alBottom
     ReadOnly = True
     ScrollBars = ssVertical
     TabOrder = 1
-    ExplicitTop = 199
+    ExplicitTop = 201
     ExplicitWidth = 663
   end
   object tmpMemo: TMemo
-    Left = 480
+    Left = 208
     Top = 179
     Width = 73
     Height = 17
@@ -9276,7 +9276,7 @@ object frmMain: TfrmMain
     object popDelStack: TMenuItem
       Caption = #1059#1076#1072#1083#1080#1090#1100
       ImageIndex = 2
-      OnClick = popOffClick
+      OnClick = popDelStackClick
     end
   end
 end

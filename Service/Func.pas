@@ -19,7 +19,7 @@ uses
 implementation
 
 uses
-  Agent, UnitDMAgent;
+  ArcFoldSrv, UnitDM;
 
 //ќпредел€ем дату и врем€ следующего старта задачи
 function FindNextStart(TipTask: integer; TimeTask: TDateTime; SelDay,

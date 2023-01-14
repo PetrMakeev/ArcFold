@@ -1,18 +1,31 @@
 program ArcFoldService;
 
 uses
-  Vcl.Forms,
-  ArcFoldSrv in 'Srv\ArcFoldSrv.pas' {frmArcFoldSrv},
-  sevenzip in 'Srv\sevenzip.pas',
-  Func in 'Srv\Func.pas',
-  unitDMSrv in 'Srv\unitDMSrv.pas' {DMS: TDataModule};
+  Vcl.SvcMgr,
+  ArcFoldSrv in 'Service\ArcFoldSrv.pas' {Service1: TService},
+  Func in 'Service\Func.pas',
+  unitDM in 'Service\unitDM.pas' {DM: TDataModule};
 
-{$R *.res}
+{$R *.RES}
 
 begin
-  Application.Initialize;
-  Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TfrmArcFoldSrv, frmArcFoldSrv);
-  Application.CreateForm(TDMS, DMS);
+  // Windows 2003 Server requires StartServiceCtrlDispatcher to be
+  // called before CoRegisterClassObject, which can be called indirectly
+  // by Application.Initialize. TServiceApplication.DelayInitialize allows
+  // Application.Initialize to be called from TService.Main (after
+  // StartServiceCtrlDispatcher has been called).
+  //
+  // Delayed initialization of the Application object may affect
+  // events which then occur prior to initialization, such as
+  // TService.OnCreate. It is only recommended if the ServiceApplication
+  // registers a class object with OLE and is intended for use with
+  // Windows 2003 Server.
+  //
+  // Application.DelayInitialize := True;
+  //
+  if not Application.DelayInitialize or Application.Installing then
+    Application.Initialize;
+  Application.CreateForm(TService1, Service1);
+  Application.CreateForm(TDM, DM);
   Application.Run;
 end.

@@ -9,6 +9,9 @@
         <Projects Include="ArcFoldAgent.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="ArcFoldServic.dproj">
+            <Dependencies/>
+        </Projects>
         <Projects Include="ArcFoldService.dproj">
             <Dependencies/>
         </Projects>
@@ -38,6 +41,15 @@
     <Target Name="ArcFoldAgent:Make">
         <MSBuild Projects="ArcFoldAgent.dproj" Targets="Make"/>
     </Target>
+    <Target Name="ArcFoldServic">
+        <MSBuild Projects="ArcFoldServic.dproj"/>
+    </Target>
+    <Target Name="ArcFoldServic:Clean">
+        <MSBuild Projects="ArcFoldServic.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ArcFoldServic:Make">
+        <MSBuild Projects="ArcFoldServic.dproj" Targets="Make"/>
+    </Target>
     <Target Name="ArcFoldService">
         <MSBuild Projects="ArcFoldService.dproj"/>
     </Target>
@@ -48,13 +60,13 @@
         <MSBuild Projects="ArcFoldService.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="ArcFold;ArcFoldAgent;ArcFoldService"/>
+        <CallTarget Targets="ArcFold;ArcFoldAgent;ArcFoldServic;ArcFoldService"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="ArcFold:Clean;ArcFoldAgent:Clean;ArcFoldService:Clean"/>
+        <CallTarget Targets="ArcFold:Clean;ArcFoldAgent:Clean;ArcFoldServic:Clean;ArcFoldService:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="ArcFold:Make;ArcFoldAgent:Make;ArcFoldService:Make"/>
+        <CallTarget Targets="ArcFold:Make;ArcFoldAgent:Make;ArcFoldServic:Make;ArcFoldService:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
